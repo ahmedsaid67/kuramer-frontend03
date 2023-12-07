@@ -52,7 +52,10 @@ const Layout = ({ children }) =>{
         );
         async function getUser() {
           try {
-            const res = await axios.get("appname/auth/users/me/");
+            const res = await axios.get("/appname/user-info/");
+
+
+            console.log("res:",res)
             dispatch(loginSuccess());
             dispatch(setUser(res.data));
             //setLoading(false);
