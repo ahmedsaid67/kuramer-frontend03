@@ -6,6 +6,7 @@ export default function Sidebar() {
   const menuItems = [
     { name: 'Personel Türü', link: '/personeller/tur' },
     { name: 'Personeller', link: '/personeller' },
+    { name: 'Kamuoyu Duyurulari', link: '/duyurular/' },
     { name: 'Broşürler', link: '/yayinlar/brosurler' },
     { name: 'Bültenler', link: '/yayinlar/bultenler' },
     { name: 'Kitap Serileri', link: '/yayinlar/kitap-serileri' },

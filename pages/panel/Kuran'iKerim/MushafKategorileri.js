@@ -21,12 +21,12 @@ const StyledTableRow = styled(TableRow)({
   },
 });
 
-export default function PersonelTuru() {
+export default function MushafKategorileri() {
   const [data, setData] = useState([]);
   const [open, setOpen] = useState(false);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [newItem, setNewItem] = useState({ name: '', status: true });
+  const [newItem, setNewItem] = useState({ baslik: '', durum: true });
   const [selectedRows, setSelectedRows] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -42,7 +42,7 @@ export default function PersonelTuru() {
   useEffect(() => {
     setIsLoading(true);
     setHasError(false);
-    axios.get(`http://127.0.0.1:8000/api/appname/personelturu/?page=${currentPage}`)
+    axios.get(`http://127.0.0.1:8000/api/appname/mushafkategori/?page=${currentPage}`)
       .then(response => {
         setData(response.data.results);
         setTotalPages(Math.ceil(response.data.count / 10));
@@ -64,7 +64,7 @@ export default function PersonelTuru() {
   };
   const handleCloseAddDialog = () => {
     setOpenAddDialog(false);
-    setNewItem({ name: '', status: true }); // newItem durumunu sıfırla
+    setNewItem({ baslik: '', durum: true }); // newItem durumunu sıfırla
     setIsNameError(false); // Hata durumunu sıfırla
   };
   
@@ -82,11 +82,11 @@ export default function PersonelTuru() {
 
   const handleSave = (editedItem) => {
 
-    if (!editedItem.name.trim()) {
+    if (!editedItem.baslik.trim()) {
       setIsNameError(true);
       return;  // Eğer isim boşsa, işlemi burada sonlandır
     }
-    axios.put(`http://127.0.0.1:8000/api/appname/personelturu/${editedItem.id}/`, editedItem)
+    axios.put(`http://127.0.0.1:8000/api/appname/mushafkategori/${editedItem.id}/`, editedItem)
       .then(response => {
         const updatedData = data.map(item => item.id === editedItem.id ? response.data : item);
         setData(updatedData);
@@ -104,14 +104,14 @@ export default function PersonelTuru() {
 
   const handleAddNewItem = () => {
 
-    if (!newItem.name.trim()) {
+    if (!newItem.baslik.trim()) {
       setIsNameError(true);
       return;  // Eğer isim boşsa, işlemi burada sonlandır
     }
-    axios.post('http://127.0.0.1:8000/api/appname/personelturu/', newItem)
+    axios.post('http://127.0.0.1:8000/api/appname/mushafkategori/', newItem)
       .then(response => {
         // Mevcut sayfayı yeniden yüklüyoru
-        return axios.get(`http://127.0.0.1:8000/api/appname/personelturu/?page=${currentPage}`);
+        return axios.get(`http://127.0.0.1:8000/api/appname/mushafkategori/?page=${currentPage}`);
       })
       .then(response => {
         setData(response.data.results);
@@ -146,9 +146,9 @@ export default function PersonelTuru() {
   };
   const handleDeleteSelected = () => {
     const selectedIds = Object.keys(selectedRows).filter(id => selectedRows[id]);
-    axios.post('http://127.0.0.1:8000/api/appname/personelturu/bulk_soft_delete/', { ids: selectedIds })
+    axios.post('http://127.0.0.1:8000/api/appname/mushafkategori/bulk_soft_delete/', { ids: selectedIds })
       .then(() => {
-        return axios.get(`http://127.0.0.1:8000/api/appname/personelturu/?page=${currentPage}`);
+        return axios.get(`http://127.0.0.1:8000/api/appname/mushafkategori/?page=${currentPage}`);
       })
       .then(response => {
         setData(response.data.results);
@@ -193,7 +193,7 @@ export default function PersonelTuru() {
 
   return (
     <>
-      <Container maxWidth="lg" style={{ marginTop: '60px', marginLeft: '65px', position: 'relative' }}>
+      <Container maxWidth="lg" style={{ marginTop: '60px', position: 'relative' }}>
         
         {deleteError && <div style={{ color: 'red', textAlign: 'center', marginBottom: '20px' }}>{deleteError}</div>}
         <Paper elevation={3} style={{ padding: '20px' }}>
@@ -216,7 +216,7 @@ export default function PersonelTuru() {
                     indeterminate={Object.keys(selectedRows).length > 0 && Object.keys(selectedRows).length < data.length}
                   />
                 </StyledTableCell>
-                <StyledTableCell>İsim</StyledTableCell>
+                <StyledTableCell>Başlık</StyledTableCell>
                 <StyledTableCell>Durum</StyledTableCell>
                 <StyledTableCell>Detaylar</StyledTableCell>
               </StyledTableRow>
@@ -230,8 +230,8 @@ export default function PersonelTuru() {
                       onChange={() => handleSelectRow(row.id)}
                     />
                   </StyledTableCell>
-                  <StyledTableCell>{row.name}</StyledTableCell>
-                  <StyledTableCell>{row.status ? 'Aktif' : 'Pasif'}</StyledTableCell>
+                  <StyledTableCell>{row.baslik}</StyledTableCell>
+                  <StyledTableCell>{row.durum ? 'Aktif' : 'Pasif'}</StyledTableCell>
                   <StyledTableCell>
                     <Button
                       variant="contained"
@@ -282,8 +282,8 @@ export default function PersonelTuru() {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <TextField label="İsim" value={selectedItem ? selectedItem.name : ''} onChange={(e) => setSelectedItem({ ...selectedItem, name: e.target.value })} fullWidth margin="normal" error={isNameError} helperText={isNameError ? 'İsim alanı boş bırakılamaz' : ''}  />
-          <FormControlLabel control={<Checkbox checked={selectedItem ? selectedItem.status : false} onChange={(e) => setSelectedItem({ ...selectedItem, status: e.target.checked })} />} label="Durum" />
+          <TextField label="Başlık" value={selectedItem ? selectedItem.baslik : ''} onChange={(e) => setSelectedItem({ ...selectedItem, baslik: e.target.value })} fullWidth margin="normal" error={isNameError} helperText={isNameError ? 'İsim alanı boş bırakılamaz' : ''}  />
+          <FormControlLabel control={<Checkbox checked={selectedItem ? selectedItem.durum : false} onChange={(e) => setSelectedItem({ ...selectedItem, durum: e.target.checked })} />} label="Durum" />
         </DialogContent>
         {saveError && <p style={{ color: 'red',marginLeft:"25px" }}>{saveError}</p>} 
         <DialogActions>
@@ -295,7 +295,7 @@ export default function PersonelTuru() {
 
       <Dialog open={openAddDialog} onClose={handleCloseAddDialog} fullWidth maxWidth="sm">
         <DialogTitle>
-          Yeni Personel Türü Ekle
+          Ekle
           <IconButton
             onClick={handleCloseAddDialog}
             style={{ position: 'absolute', right: 8, top: 8 }}
@@ -306,18 +306,18 @@ export default function PersonelTuru() {
           </DialogTitle>
         <DialogContent>
         <TextField
-          label="İsim"
-          value={newItem.name}
+          label="Başlık"
+          value={newItem.baslik}
           onChange={(e) => {
             setIsNameError(false);  // Kullanıcı metni değiştirdiğinde hata durumunu sıfırla
-            setNewItem({ ...newItem, name: e.target.value });
+            setNewItem({ ...newItem, baslik: e.target.value });
           }}
           fullWidth
           margin="normal"
           error={isNameError} // Hata durumuna göre hata göster
           helperText={isNameError ? 'İsim alanı boş bırakılamaz' : ''} // Hata mesajını göster
         />
-          <FormControlLabel control={<Checkbox checked={newItem.status} onChange={(e) => setNewItem({ ...newItem, status: e.target.checked })} />} label="Durum" />
+          <FormControlLabel control={<Checkbox checked={newItem.durum} onChange={(e) => setNewItem({ ...newItem, durum: e.target.checked })} />} label="Durum" />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleAddNewItem} color="primary">

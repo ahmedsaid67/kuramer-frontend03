@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import axios from "axios";
-import { setUser,userLoggedOut } from '../user/userSlice';
+import { setUser } from '../user/userSlice';
 import { showMessage } from "../message/messageSlice";
 
-import { deleteTokenFromCookie, storeTokenInCookie } from "../lib/common";
+import {  storeTokenInCookie } from "../lib/common";
 
 
 
@@ -15,13 +15,13 @@ export const submitLogin =
       dispatch(loginLoading());
       const response = await axios({
         method: "post",
-        url: "http://127.0.0.1:8000/api/appname/token/login/",  // bu api authenticate olmasına dair bir izin ile ÇALIŞMAZ.
+        url: "http://127.0.0.1:8000/api/appname/token/",  // bu api authenticate olmasına dair bir izin ile ÇALIŞMAZ.
         data: {
           username,
           password,
         },
       });
-      console.log("/auth/token/login/:",response)
+      console.log("token:",response.data.token)
       if (!response?.data?.token) {
         console.log("Something went wrong during signing in: ", response);
         dispatch(loginError(response));
@@ -29,15 +29,12 @@ export const submitLogin =
       }
       storeTokenInCookie(response.data.token);
 
-      
-      
       try {
         axios.defaults.headers.common[
           "Authorization"
         ] = `token ${response.data.token}`;
-
         
-        const res = await axios.get("http://127.0.0.1:8000/api/appname/auth/users/me/");
+        const res = await axios.get("http://127.0.0.1:8000/api/appname/user-info/");
         dispatch(setUser(res.data));
         console.log("kullanıcı-bilgileri:",res.data)
       } catch (err) {
@@ -72,45 +69,7 @@ export const submitLogin =
 
   };
 
-export const submitLogout = () => async (dispatch) => {
-  try {
-    const response = await axios({
-      method: "post",
-      url: API_ROUTES.LOGOUT, 
-    });
-    if (response?.data?.detail) {
-      console.log("Something went wrong during logout: ", response);
-      dispatch(loginError(response));
-      return;
-    }
 
-    axios.defaults.headers.common["Authorization"] = null;
-    deleteTokenFromCookie();
-    dispatch(userLoggedOut());
-    dispatch(logout());
-    dispatch(
-      showMessage({
-        message: "Oturum kapatıldı.",
-        variant: "success",
-      })
-    );
-
-    
-  } catch (err) {
-    console.log("Some error occured during signing in: ", err);
-    err?.response?.data?.non_field_errors?.map((error) => {
-      dispatch(
-        showMessage({
-          message: error,
-          variant: "error",
-        })
-      );
-      // dispatch(loginError(error));
-    });
-  } finally {
-    // dispatch(loginLoadingDone());
-  }
-};
 
 
 const initialState= {
