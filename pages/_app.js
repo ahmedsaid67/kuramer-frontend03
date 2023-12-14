@@ -1,3 +1,5 @@
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+
 import '../styles/globals.css'
 
 import UserProvider from '../context/provider';

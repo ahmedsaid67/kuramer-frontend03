@@ -1,3 +1,6 @@
+/* global.css */
+@import '~react-pdf/dist/esm/Page/AnnotationLayer.css';
+
 html,
 body {
   padding: 0;
@@ -24,3 +27,5 @@ a {
     background: black;
   }
 }
+
+
