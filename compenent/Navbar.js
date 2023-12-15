@@ -22,7 +22,9 @@ const Navbar = () => {
   async function getIndex() {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/appname/menuitems/menu/selected/");
-      setMenuItems(response.data);
+      const sortedMenuItems = response.data.sort((a, b) => a.order - b.order);
+      setMenuItems(sortedMenuItems);
+      console.log("sorted items:", sortedMenuItems);
     } catch (error) {
       console.error("Hata oluştu:", error);
     }
