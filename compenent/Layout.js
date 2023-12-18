@@ -89,7 +89,9 @@ const Layout = ({ children }) =>{
           // Değilse, sadece Navbar ve children içeriğini göster
           <>
             <Navbar/>
-            <div>{children}</div>
+            <div style={{  marginTop:"80px"  }}>
+              {children}
+            </div>
           </>
         )}
       </>
