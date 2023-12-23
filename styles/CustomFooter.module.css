@@ -1,0 +1,50 @@
+/* styles/CustomFooter.module.css */
+
+.customFooter {
+  background-color: #333;
+  color: #fff;
+  padding: 20px 0;
+  width: 100%;
+}
+
+.footerContent {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footerSection {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.footerSection h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.footerSection p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.footerSection ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footerSection li {
+  margin-bottom: 8px;
+}
+
+.footerSection a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.footerBottom {
+  margin-top: 20px;
+  text-align: center;
+}

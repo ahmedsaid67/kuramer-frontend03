@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+// components/Layout.js
+
+import { useEffect } from "react";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { deleteTokenFromCookie } from "../context/features/lib/common";
 import { getCookie } from "cookies-next";
 import { setUser, userLoggedOut } from "../context/features/user/userSlice";
@@ -9,94 +11,79 @@ import { showMessage } from "../context/features/message/messageSlice";
 
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
+import Footer from "./Footer";
 import { useRouter } from 'next/router';
+import styles from "../styles/Layout.module.css";
 
-const Layout = ({ children }) =>{
-
+const Layout = ({ children }) => {
   const router = useRouter();
-  // Yolu kontrol et
   const isPanelPage = router.pathname.includes('/panel');
-
   const dispatch = useDispatch();
 
-
-    useEffect(() => {
-        axios.defaults.headers.common["Accept-Language"] = "tr-tr"; // navigator.language || navigator.userLanguage || "tr-tr";
-        axios.defaults.baseURL ="http://127.0.0.1:8000/api"
-        axios.interceptors.response.use(
-          (response) => {
-            return response;
-          },
-    
-          async (err) => {
-            const originalConfig = err.config;
-            if (err.response.status === 401) {  // yanıt 401 hatası dönecek ise;
-              axios.defaults.headers.common["Authorization"] = null;
-              if (getCookie("token"))
-                console.log("token süresi bitti")
-                dispatch(
-                  showMessage({
-                    message: "token",
-                    variant: "info",
-                  })
-                );
-              deleteTokenFromCookie();
-              dispatch(userLoggedOut());
-              dispatch(logout());
-              return Promise.reject(err);
-            }
-            return Promise.reject(err);    // cokies de bir token var ama süresi bittiğinden hata döndürüyor o zaman hata yanıtını al
-                                           // cokies deki tokeni sil axiosdaki bu tokuna ait head dakş formatı sil ve authenticate olarak
-                                           // adlandırılmış state yi false yap.
+  useEffect(() => {
+    axios.defaults.headers.common["Accept-Language"] = "tr-tr";
+    axios.defaults.baseURL = "http://127.0.0.1:8000/api";
+    axios.interceptors.response.use(
+      (response) => response,
+      async (err) => {
+        const originalConfig = err.config;
+        if (err.response.status === 401) {
+          axios.defaults.headers.common["Authorization"] = null;
+          if (getCookie("token")) {
+            console.log("token süresi bitti");
+            dispatch(
+              showMessage({
+                message: "token",
+                variant: "info",
+              })
+            );
           }
-        );
-        async function getUser() {
-          try {
-            const res = await axios.get("/appname/user-info/");
-
-
-            console.log("res:",res)
-            dispatch(loginSuccess());
-            dispatch(setUser(res.data));
-            //setLoading(false);
-          } catch (err) {
-            //setLoading(false);
-            console.log(err);
-          }
+          deleteTokenFromCookie();
+          dispatch(userLoggedOut());
+          dispatch(logout());
+          return Promise.reject(err);
         }
-    
-        const token = getCookie("token");
-        console.log("layout-getcookie-token:",token)
-        if (token) {
-          axios.defaults.headers.common["Authorization"] = `token ${token}`;
-          getUser();
-        } else {
-          //setLoading(false);
-        }
-        return () => {};   
-                                         
-      }, [dispatch]);
+        return Promise.reject(err);
+      }
+    );
 
-    return(
-      <>
+    async function getUser() {
+      try {
+        const res = await axios.get("/appname/user-info/");
+        console.log("res:", res);
+        dispatch(loginSuccess());
+        dispatch(setUser(res.data));
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    const token = getCookie("token");
+    console.log("layout-getcookie-token:", token);
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `token ${token}`;
+      getUser();
+    }
+  }, [dispatch]);
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.contentWrapper}>
         {isPanelPage ? (
-          // Eğer panel sayfasındaysa, Sidebar ve children içeriğini yan yana göster
-          <div style={{ display: 'flex' }}>
-            <Sidebar/>
-            <div>{children}</div>
+          <div className={styles.panelContainer}>
+            <Sidebar />
+            <div className={styles.panelContent}>{children}</div>
           </div>
         ) : (
-          // Değilse, sadece Navbar ve children içeriğini göster
-          <>
-            <Navbar/>
-            <div style={{  marginTop:"80px"  }}>
-              {children}
-            </div>
-          </>
+          <div className={styles.pageContainer}>
+            <Navbar />
+            <div className={styles.pageContent}>{children}</div>
+          </div>
         )}
-      </>
-    )
-}
-
+      </div>
+      <Footer />
+    </div>
+  );
+};
 
 export default Layout;

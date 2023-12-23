@@ -1,6 +1,6 @@
 .navbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
   padding: 1rem;
   background-color: #fff;
@@ -9,11 +9,6 @@
   position: fixed;
   width: 100%; 
   top: 0; 
-}
-
-.logo {
-  font-size: 24px;
-  font-weight: bold;
 }
 
 .hamburgerButton {
@@ -54,9 +49,9 @@
 }
 
 .navItem {
-  font-size: 10px; /* Masaüstünde font boyutu */
+  font-size: 16px; /* Masaüstünde font boyutu */
   font-weight: bold;
-  margin: 0 3px;
+  margin: 0 5px;
   position: relative;
   cursor: pointer;
   padding-bottom: 11px; /* Alt padding ekle */
@@ -73,22 +68,23 @@
 .subMenu {
   list-style-type: none;
   padding: 0;
-  margin: 0;
   display: none; /* Başlangıçta gizli */
   position: absolute;
-  left: 0;
-  top: 30px;
+  top: 100%; /* Alt menüyü parent itemin altından aç */
+  left: 50%; /* Alt menüyü yatayda ortala */
+  transform: translateX(-50%); /* Yatayda ortalamak için */
   background-color: #ffffff;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  min-width: 150px; /* Min genişlik */
+  min-width: 200px; /* Min genişlik */
   z-index: 1002;
+  text-align: center;
 }
 
 .subNavItem {
   padding: 10px 20px; /* Daha fazla iç boşluk */
   border-bottom: 1px solid #f0f0f0; /* Alt çizgi rengini hafiflet */
   color: #333;
-  font-size: 10px; /* Font boyutunu koru */
+  font-size: 14px; /* Font boyutunu koru */
 }
 
 .subNavItem:hover {
@@ -138,6 +134,8 @@
 
 
 @media (min-width: 768px) {
+  
+  
   .navMenu {
     display: flex;
     position: static;
@@ -151,8 +149,10 @@
   }
 
   .navItem {
-    font-size: 12px;
+    font-size: 16px;
+    padding: 0 16px;
     margin: 0 5px;
+    text-align: center;
   }
 
   .navItem:hover .subMenu {
@@ -174,6 +174,10 @@
 }
 
 @media (max-width: 768px) {
+  .navbar{
+    justify-content: space-between;
+  }
+
   .hamburgerButton {
     display: block;
   }
@@ -194,6 +198,9 @@
 }
 
 @media (min-width: 768px) and (max-width: 900px) {
+  .navbar{
+    justify-content: space-between;
+  }
   .navItem {
     font-size: 9px;
   }

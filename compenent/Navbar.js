@@ -1,10 +1,14 @@
+// Navbar.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import useWindowSize from './useWindowSize';
 import styles from '../styles/Navbar.module.css';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const Navbar = () => {
+  const router = useRouter();
   const [width] = useWindowSize();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
@@ -45,7 +49,13 @@ const Navbar = () => {
       <ul className={styles.subMenu}>
         {menuItems.filter(item => item.parent === parentId).map(subItem => (
           <li key={subItem.id} className={styles.subNavItem}>
-            {subItem.title}
+            {subItem.url ? (
+              <Link href={subItem.url}>
+                {subItem.title}
+              </Link>
+            ) : (
+              <span>{subItem.title}</span>
+            )}
           </li>
         ))}
       </ul>
@@ -57,20 +67,24 @@ const Navbar = () => {
       <ul className={styles.navMenu}>
         {menuItems.filter(item => item.parent === parentId).map(item => (
           <li key={item.id} className={styles.navItem}>
-            {item.title}
+            {item.url ? (
+              <Link href={item.url}>
+                {item.title}
+              </Link>
+            ) : (
+              <span>{item.title}</span>
+            )}
           </li>
         ))}
       </ul>
     );
   };
 
- 
-
   return (
     <div>
       <nav className={styles.navbar}>
         <div className={styles.logo}>
-          <Image src="/kuramerlogo.png" alt="Logo" width={40} height={40} />
+          <Image src="/kuramerlogo.png" alt="Logo" width={50} height={50} />
         </div>
         {isMobile && (
           <button onClick={toggleMenu} className={styles.hamburgerButton}>
@@ -104,17 +118,23 @@ const Navbar = () => {
         )}
         {!isMobile && (
           <ul className={styles.navMenu}>
-          {menuItems.filter(item => !item.parent).map(item => (
-            <div key={item.id} className={styles.menuItemContainer}
-                 onMouseLeave={() => activeSubMenu === item.id && setActiveSubMenu(null)}>
-              <li className={styles.navItem}
-                  onMouseEnter={() => setActiveSubMenu(item.id)}>
-                {item.title}
-              </li>
-              {activeSubMenu === item.id && renderSubMenu(item.id)}
-            </div>
-          ))}
-        </ul>
+            {menuItems.filter(item => !item.parent).map(item => (
+              <div key={item.id} className={styles.menuItemContainer}
+                   onMouseLeave={() => activeSubMenu === item.id && setActiveSubMenu(null)}>
+                <li className={styles.navItem}
+                    onMouseEnter={() => setActiveSubMenu(item.id)}>
+                  {item.url ? (
+                    <Link href={item.url}>
+                      {item.title}
+                    </Link>
+                  ) : (
+                    <span>{item.title}</span>
+                  )}
+                </li>
+                {activeSubMenu === item.id && renderSubMenu(item.id)}
+              </div>
+            ))}
+          </ul>
         )}
       </nav>     
     </div>
@@ -122,10 +142,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-
-
-
-
-
-

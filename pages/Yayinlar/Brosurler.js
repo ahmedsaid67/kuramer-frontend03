@@ -3,13 +3,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button} from '@mui/material';
 import Image from 'next/image';
-import CardOge from '../compenent/CardOge'
-import styles from '../styles/Brosurler.module.css';
+import CardOge from '../../compenent/CardOge'
+import styles from '../../styles/Brosurler.module.css';
 
 
 function Brosurler() {
   const [brosurler, setBrosurler] = useState([]);
-  const [visibleBrosurler, setVisibleBrosurler] = useState(9);
+  const [visibleBrosurler, setVisibleBrosurler] = useState(12);
 
   useEffect(() => {
     const getData = async () => {
@@ -41,7 +41,7 @@ function Brosurler() {
 
       <div className={styles.cardContainer}>
         {brosurler.slice(0, visibleBrosurler).map((brosur, index) => (
-          <CardOge key={index} brosur={brosur} handleDownloadPDF={handleDownloadPDF} />
+          <CardOge key={index} yayin={brosur} handleDownloadPDF={handleDownloadPDF} />
         ))}
       </div>
 
