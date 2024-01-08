@@ -36,7 +36,7 @@ function Bultenler() {
       <>
         <div className={styles.bannerImage}>
           <h1>Bultenler</h1> {/* Başlık adını güncelle */}
-          <Image src="/başlıkgörseli.jpg" alt="Logo" layout="fill" />
+          <Image src="/baslikgorseli.jpg" alt="Logo" layout="fill" />
         </div>
   
         <div className={styles.cardContainer}>
