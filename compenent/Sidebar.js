@@ -1,54 +1,427 @@
-import Link from 'next/link';
-import styles from '../styles/Sidebar.module.css'; // Modül CSS dosyası
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { AppBar, Box,Toolbar,Divider, IconButton, Typography, List, ListItem, ListItemText, Drawer, CssBaseline } from '@mui/material';
+import LogoutIcon from '@mui/icons-material/Logout';
+import MenuIcon from '@mui/icons-material/Menu';
+import styles from '../styles/Sidebar.module.css';
+import CircularProgress from '@mui/material/CircularProgress';
 
-export default function Sidebar() {
-  // Menü öğeleri listesi
-  const menuItems = [
-    { name: 'Personel Türü', link: '/personeller/tur' },
-    { name: 'Personeller', link: '/personeller' },
-    { name: 'Kamuoyu Duyurulari', link: '/duyurular/' },
-    { name: 'Broşürler', link: '/yayinlar/brosurler' },
-    { name: 'Bültenler', link: '/yayinlar/bultenler' },
-    { name: 'Kitap Serileri', link: '/yayinlar/kitap-serileri' },
-    { name: 'Kitap Kategorileri', link: '/yayinlar/kitap-kategorileri' },
-    { name: 'Kitaplar', link: '/yayinlar/kitaplar' },
-    { name: 'Temel Konu ve Kavramlar', link: '/temel-konular' },
-    { name: 'Temel Kavramlar', link: '/temel-kavramlar' },
-    { name: 'Yayınlarımızdan Seçmeler', link: '/yayinlar/secmeler' },
-    { name: 'Kuran-ı Kerim', link: '/kuran-i-kerim' },
-    { name: 'Müşaf Kategorileri', link: '/kuran/musaf-kategorileri' },
-    { name: 'Müşaflar', link: '/kuran/musaflar' },
-    { name: 'Müşaf Farkları', link: '/kuran/musaf-farklari' },
-    { name: 'Sempozyum ve Çalıştay', link: '/faaliyetler/sempozyum' },
-    { name: 'Sempozyumlar', link: '/faaliyetler/sempozyumlar' },
-    { name: 'Çalıştaylar', link: '/faaliyetler/calistaylar' },
-    { name: 'Konferanslar', link: '/faaliyetler/konferanslar' },
-    { name: 'Eğitimler', link: '/faaliyetler/egitimler' },
-    { name: 'Çalışmalar', link: '/faaliyetler/calismalar' },
-    { name: 'Basında Biz', link: '/medya-galeri/basinda-biz' },
-    { name: 'Yazılı Basın', link: '/medya-galeri/yazili-basin' },
-    { name: 'Görsel Basın', link: '/medya-galeri/gorsel-basin' },
-    { name: 'Fotoğraf Galerisi', link: '/medya-galeri/fotograf-galerisi' },
-    { name: 'Fotoğraf Galerisi Kategori', link: '/medya-galeri/fotograf-galerisi-kategori' },
-    { name: 'Albüm', link: '/medya-galeri/album' },
-    { name: 'Video Galeri', link: '/medya-galeri/video-galeri' },
-    { name: 'Video Galeri Kategori', link: '/medya-galeri/video-galeri-kategori' },
-    { name: 'Video', link: '/medya-galeri/video' },
-    // Buraya ek menü öğeleri eklenebilir
-  ];
+const drawerWidth = 240;
+
+const MenuListItems = [
+  {
+    id: 1,
+    text: 'Menü',
+    url: '/panel/menu',
+  },
+  {
+    id: 2,
+    text: 'Sürgülü Banner',
+    url: '/panel/sliders',
+  },
+  {
+    id: 3,
+    text: 'Popup',
+    url: '/panel/popup',
+  },
+  {
+    id: 4,
+    text: 'Başlık Görsel',
+    url: '/panel/baslik-gorsel',
+  },
+  {
+    id: 5,
+    text: 'Personeller',
+    children: [
+      { id: 51, text: 'Personel Türü', url: '/panel/personeller/personel-turu' },
+      { id: 52, text: 'Personeller', url: '/panel/personeller/personeller' },
+    ],
+  },
+  {
+    id: 6,
+    text: 'Yayınlar',
+    children: [
+      {
+        id: 61,
+        text: 'Kitaplar',
+        children: [
+          { id: 611, text: 'Kitap Serileri', url: '/panel/yayinlar/kitaplar/kitap-kategori' },
+          { id: 612, text: 'Kitaplar', url: '/panel/yayinlar/kitaplar/kitaplar' },
+        ],
+      },
+        
+      { id: 62, text: 'Broşürler', url: '/panel/yayinlar/brosurler' },
+      { id: 63, text: 'Bültenler', url: '/panel/yayinlar/bultenler' },
+      { id: 64, text: 'E bülten Aboneleri', url: '/panel/yayinlar/aboneler' },
+      { id: 65, text: 'E bülten', url: '/panel/yayinlar/ebulten' },
+        
+      
+    ],
+  },
+  {
+    id: 7,
+    text: 'Temel Konu ve Kavramlar',
+    children: [
+      { id: 71, text: 'Temel Konular', url: '/panel/temel-konu-ve-kavramlar/temel-konular' },
+      { id: 72, text: 'Temel Kavramlar', url: '/panel/temel-konu-ve-kavramlar/temel-kavramlar' },
+    ],
+  },
+  {
+    id: 8,
+    text: 'Yayınlarımızdan Seçmeler',
+    url: '/panel/yayinlarimizdan-secmeler',
+  },
+  {
+    id: 9,
+    text: 'Kuran-ı Kerim',
+    children: [
+      {
+        id: 91,
+        text: 'Mushaflar',
+        children: [
+          { id: 911, text: 'Mushaf Kategorileri', url: '/panel/kurani-kerim/mushaf-kategorileri' },
+          { id: 912, text: 'Mushaflar', url: '/panel/kurani-kerim/mushaflar' },
+        ],
+      },
+
+        { id: 921, text: 'Mushaf Farkları', url: '/panel/kurani-kerim/mushaf-farklari' },
+
+      
+    ],
+  },
+  {
+    id: 10,
+    text: 'Faaliyetler',
+    children: [
+      { id: 101, text: 'Sempozyumlar', url: '/panel/faaliyetler/sempozyumlar' },
+      { id: 102, text: 'Çalıştaylar', url: '/panel/faaliyetler/calistaylar' },
+      { id: 103, text: 'Konferanslar', url: '/panel/faaliyetler/konferanslar' },
+      { id: 104, text: 'Araştırmalar', url: '/panel/faaliyetler/arastirmalar' },
+      { id: 105, text: 'Eğitimler', url: '/panel/faaliyetler/egitimler' },
+    ],
+  },
+  {
+    id: 11,
+    text: 'Medya Galeri',
+    children: [
+      {
+        id: 111,
+        text: 'Basında Biz',
+        children: [
+          { id: 1111, text: 'Yazılı Basın', url: '/panel/medya-galeri/basinda-biz/yazili-basin' },
+          { id: 1112, text: 'Görsel Basın', url: '/panel/medya-galeri/basinda-biz/gorsel-basin' },
+        ],
+      },
+      {
+        id: 112,
+        text: 'Fotoğraf Galerisi',
+        children: [
+          { id: 1121, text: 'Fotoğraf Galerisi Kategorisi', url: '/panel/medya-galeri/foto/foto-galeri-kategori' },
+          { id: 1122, text: 'Fotoğtaf Galerisi', url: '/panel/medya-galeri/foto/foto-galeri' },
+        ],
+      },
+      {
+        id: 113,
+        text: 'Video Galeri',
+        children: [
+          { id: 1131, text: 'Video Galeri Kategorisi', url: '/panel/medya-galeri/video/video-galeri-kategori' },
+          { id: 1132, text: 'Videolar', url: '/panel/medya-galeri/video/video-galeri' },
+        ],
+      },
+    ],
+  },
+  // Diğer öğeleri de benzer şekilde ekleyebilirsiniz.
+];
+
+function NestedList({ children }) {
+  const router = useRouter();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeMainTab, setActiveMainTab] = useState(null);
+  const [activeSubTab, setActiveSubTab] = useState(null);
+  const [activeSubSubTab, setActiveSubSubTab] = useState(null);
+  const [selectedSubItems, setSelectedSubItems] = useState([]);
+  const [selectedSubSubItems, setSelectedSubSubItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // URL yolu üzerinden aktif öğeleri belirle
+    const path = router.pathname;
+    let activeMainItem, activeSubItem, activeSubSubItem;
+  
+    MenuListItems.forEach(item => {
+      if (item.url === path) {
+        activeMainItem = item;
+      }
+      item.children?.forEach(subItem => {
+        if (subItem.url === path) {
+          activeMainItem = item;
+          activeSubItem = subItem;
+        }
+        subItem.children?.forEach(subSubItem => {
+          if (subSubItem.url === path) {
+            activeMainItem = item;
+            activeSubItem = subItem;
+            activeSubSubItem = subSubItem;
+          }
+        });
+      });
+    });
+  
+    // Bulunan aktif öğelere göre state'i güncelle
+    if (activeMainItem) {
+      setActiveMainTab(activeMainItem.id);
+      setSelectedSubItems(activeMainItem.children || []);
+    }
+    if (activeSubItem) {
+      setActiveSubTab(activeSubItem.id);
+      setSelectedSubSubItems(activeSubItem.children || []);
+    }
+    if (activeSubSubItem) {
+      setActiveSubSubTab(activeSubSubItem.id);
+    }
+  }, [router.pathname]);
+  
+
+  useEffect(() => {
+    const handleStart = (url) => setLoading(true);
+    const handleComplete = (url) => setLoading(false);
+
+    router.events.on('routeChangeStart', handleStart);
+    router.events.on('routeChangeComplete', handleComplete);
+    router.events.on('routeChangeError', handleComplete);
+
+    return () => {
+      router.events.off('routeChangeStart', handleStart);
+      router.events.off('routeChangeComplete', handleComplete);
+      router.events.off('routeChangeError', handleComplete);
+    };
+  }, [router]);
+  
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const handleMainTabChange = (item) => {
+    setActiveMainTab(item.id);
+    setSelectedSubItems(item.children || []);
+  
+    if (item.children && item.children.length > 0) {
+      // İlk alt öğeyi aktif yap
+      const firstSubItem = item.children[0];
+      setActiveSubTab(firstSubItem.id);
+      setSelectedSubSubItems(firstSubItem.children || []);
+  
+      // İlk alt öğenin alt öğeleri varsa, onların da ilkini aktif yap
+      if (firstSubItem.children && firstSubItem.children.length > 0) {
+        setActiveSubSubTab(firstSubItem.children[0].id);
+      } else {
+        setActiveSubSubTab(null);
+      }
+  
+      // Yönlendirme işlemi
+      if (firstSubItem.url) {
+        router.push(firstSubItem.url);
+      } else if (firstSubItem.children && firstSubItem.children.length > 0 && firstSubItem.children[0].url) {
+        router.push(firstSubItem.children[0].url);
+      }
+    } else {
+      if (item.url) {
+        router.push(item.url);
+      }
+      // Alt öğeler için aktiflikleri temizle
+      setActiveSubTab(null);
+      setSelectedSubSubItems([]);
+    }
+  };
+  
+  
+  const handleSubTabChange = (subItem, parentItemId) => {
+    // Mevcut aktif alt öğeyi ve alt-alt öğelerini güncelle
+    setActiveSubTab(subItem.id);
+    setSelectedSubSubItems(subItem.children || []);
+    // Mevcut aktif ana öğeyi güncelle
+    if (parentItemId && parentItemId !== activeMainTab) {
+      setActiveMainTab(parentItemId);
+      const parentItem = MenuListItems.find(item => item.id === parentItemId);
+      setSelectedSubItems(parentItem.children || []);
+    }
+    // İlk alt-alt öğeyi aktif yap
+    if (subItem.children && subItem.children.length > 0) {
+      setActiveSubSubTab(subItem.children[0].id);
+      // İlk alt-alt öğenin sayfasına yönlendir
+      if (subItem.children[0].url) {
+        router.push(subItem.children[0].url);
+      }
+    } else {
+      // Alt-alt öğeler yoksa, mevcut alt öğenin sayfasına yönlendir
+      if (subItem.url) {
+        setActiveSubSubTab(null);
+        router.push(subItem.url);
+      }
+    }
+  };
+  
+  
+  const handleSubSubTabChange = (subSubItem) => {
+    setActiveSubSubTab(subSubItem.id);
+    
+    // Alt-alt öğenin ebeveynini bul
+    const parentSubItem = selectedSubItems.find(item => item.children?.some(child => child.id === subSubItem.id));
+    if (parentSubItem) {
+      setActiveSubTab(parentSubItem.id);
+  
+      // Eğer bu alt öğenin de ebeveyni varsa onu da bul ve aktif yap
+      const mainParentItem = MenuListItems.find(item => item.children?.some(child => child.id === parentSubItem.id));
+      if (mainParentItem) {
+        setActiveMainTab(mainParentItem.id);
+      }
+    }
+  
+    // Yönlendirme
+    if (subSubItem.url) {
+      router.push(subSubItem.url);
+    }
+  };
+
+  const renderSubItems = () => (
+    
+    <Box sx={{ width: drawerWidth }}>
+      <Typography 
+        variant="h6" // Daha büyük bir başlık boyutu
+        noWrap
+        component="div"
+        style={{
+          fontWeight: 'bold', // Kalın yazı tipi
+          color: '#507dac', // Dikkat çekici bir renk
+          fontSize: "18px" // Font boyutunu artır
+        }}
+      >
+        {activeMainTab && MenuListItems.find(item => item.id === activeMainTab).text}
+      </Typography>
+      <List>
+        {selectedSubItems.map((subItem) => (
+          <React.Fragment key={subItem.id}>
+            <ListItem 
+              selected={activeSubTab === subItem.id}
+              onClick={() => handleSubTabChange(subItem)}
+              className={styles.nested}
+            >
+              <ListItemText 
+                primary={
+                  <Typography 
+                    variant="subtitle1" 
+                    style={{ 
+                      fontWeight: 'bold', 
+                      color: activeSubTab === subItem.id ? 'black' : 'grey',
+                      fontSize:"16px"
+                    }}
+                  >
+                    {subItem.text}
+                  </Typography>
+                }
+              />
+            </ListItem>
+            <List component="div" disablePadding className={styles.nestedList}>
+              {subItem.children?.map((subSubItem) => (
+                <ListItem 
+                  key={subSubItem.id}
+                  selected={activeSubSubTab === subSubItem.id}
+                  onClick={() => handleSubSubTabChange(subSubItem)}
+                  className={styles.nestedSubList}
+                >
+                  <ListItemText 
+                    primary={
+                      <Typography 
+                        variant="subtitle1" 
+                        style={{ 
+                          fontWeight: 'bold', 
+                          color: activeSubSubTab === subSubItem.id ? 'black' : 'grey',
+                          fontSize:"16px"
+                        }}
+                      >
+                        {subSubItem.text}
+                      </Typography>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </React.Fragment>
+        ))}
+      </List>
+    </Box>
+    
+    
+  );
 
   return (
-    <div className={styles.sidebar}>
-      <h1>Kuramer Panel</h1>
-      <ul className={styles.menuList}>
-        {menuItems.map((item, index) => (
-          <li key={index} className={styles.menuItem}>
-            <Link href={item.link}>
-              {item.name}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ marginRight: 2, display: { sm: 'none' } }}
+          >
+            
+          </IconButton>
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+            Kuramer Panel
+          </Typography>
+          <IconButton
+            color="inherit"
+            aria-label="logout"
+            onClick={() => console.log('Logout')}
+          >
+            <LogoutIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box', backgroundColor:"#3a3b3c;" },
+        }}
+      >
+        <Toolbar />
+        <Box sx={{ overflow: 'auto' }}>
+          <List>
+            {MenuListItems.map((item) => (
+              <ListItem 
+                key={item.id}
+                selected={activeMainTab === item.id}
+                onClick={() => handleMainTabChange(item)}
+                className={styles.menuItem}
+              >
+                <ListItemText primary={item.text} />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
+      <Box component="main" sx={{ flexGrow: 1,  }}>
+        <Toolbar />
+        <div className={styles.rightbar}>
+          <div className={styles.tabContainer} >
+            {renderSubItems()}
+          </div>
+          <div className={styles.content}>
+            {loading ? (
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+              </div>
+            ) : children }
+          </div>
+        </div>
+      </Box>
+    </Box>
   );
 }
+
+export default NestedList;
