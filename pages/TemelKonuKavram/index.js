@@ -77,7 +77,7 @@ function Index() {
         <div className={styles.titleContainer}>
           <h1>Temel Konu ve Kavramlar</h1>
         </div>
-        <Image src="/başlıkgörseli.jpg" alt="Logo" layout="fill" />
+        <Image src="/baslikgorseli.jpg" alt="Logo" layout="fill" />
       </div>
 
       {visible < temelKonular.length && (
