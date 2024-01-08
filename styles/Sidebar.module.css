@@ -1,28 +1,222 @@
+/* Ana Konteyner */
+.container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: #3c648c;
+}
+
+/* Sidebar */
 .sidebar {
-    width: 250px;
-    
-    background-color: #f0f0f0;
-    padding: 20px;
-    box-sizing: border-box;
-  }
+  width: 250px;
+  background-color: #2e5077;
+  color: #ffffff;
+  height: 100vh;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Başlık Konteyneri */
+.baslikContainer {
+  padding-left: 20px;
+  background-color: #507dac;
+  height: 75px;
+  display: flex;
+  align-items: center;
+}
+
+/* Başlık */
+.baslik {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Menü Listesi */
+.menuList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Menü Öğesi */
+.menuItem {
+  padding: 15px 20px;
+  transition: background-color 0.3s;
+  font-size: 16px;
+  font-weight: 500;
+  border-left: 4px solid transparent;
+  color: #ffffff;
+}
+
+.menuItem:hover {
+  background-color: #4a6c8c;
+  border-left: 4px solid #007bff;
+  cursor: pointer;
+}
+
+/* Menü Öğesi Linkleri */
+.menuItem a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Sağ Konteyner */
+.rightContainer {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+}
+
+/* Header Konteyneri */
+.headerContainer {
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #212529;
+}
+
+/* Çıkış Yap Konteyneri */
+.logoutContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  height: 75px;
+}
+
+/* Çıkış Yap Butonu */
+.logoutButton {
+  font-size: 16px;
+  background-color: #dc3545;
+  color: #ffffff;
+  padding: 8px 32px;
+  border-radius: 20px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+  margin-right: 20px;
+}
+
+.logoutButton:hover {
+  background-color: #bd2130;
+}
+
+/* İçerik */
+.children {
+  flex-grow: 1;
+  padding: 10px;
+  overflow-y: auto;
+  display: flex;
+}
+
+/* Özel Tablar */
+.customTabs {
+  background-color: #ecf0f1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Özel Tab */
+.customTab {
+  font-size: 16px;
+  color: #34495e;
+  text-transform: none;
+  margin-right: 4px;
+  padding: 10px 16px;
+  border: 1px solid #bdc3c7;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+.customTab:hover {
+  background-color: #bdc3c7;
+}
+
+.customTab.Mui-selected {
+  color: #2c3e50;
+  background-color: #ecf0f1;
+  border-color: #2c3e50;
+}
+
+/* Alt Tablar */
+.customSubTabs {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: #ecf0f1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin: 10px 0;
+  padding: 0;
+}
+
+/* Özel Alt Tab */
+.customSubTab {
+  font-size: 14px;
+  color: #576574;
+  text-transform: none;
+  padding: 10px 20px;
+  margin: 5px 10px;
+  border: none;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.customSubTab:hover {
+  color: #2c3e50;
+  background-color: #dfe6e9;
+}
+
+.customSubTab.Mui-selected {
+  color: #2980b9;
+  background-color: #d6eaf8;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* İç İçe Menü Öğeleri */
+.nested {
+  padding-left: 0;
+  width: 250px;
+}
+
+.nestedList {
+  padding-left: 0;
+  width: 250px;
   
-  .menuList {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .menuItem {
-    margin-bottom: 10px;
-  }
-  
-  .menuItem a {
-    text-decoration: none;
-    color: #333;
-    font-weight: bold;
-  }
-  
-  .menuItem a:hover {
-    color: #0070f3;
-  }
+}
+.nested:hover{
+  cursor: pointer;
+}
+.nestedList:hover{
+  cursor: pointer;
+
+}
+
+.subitem {
+  color: black;
+}
+
+/* İçerik */
+.content {
+  margin-left: 20px;
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
+
+}
+
+.tabContainer{
+  background-color: #F5F5F5; 
+  width: 350px;
+  min-height: calc(100vh - 64px);;
+  overflow: hidden;
+  padding:50px;
+}
+.rightbar {
+  display: flex;
+  flex-grow: 1;
+
+}
   
