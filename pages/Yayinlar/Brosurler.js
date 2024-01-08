@@ -36,7 +36,7 @@ function Brosurler() {
     <>
       <div className={styles.bannerImage}>
         <h1>Brosurler</h1>
-        <Image src="/başlıkgörseli.jpg" alt="Logo" layout="fill" />
+        <Image src="/baslikgorseli.jpg" alt="Logo" layout="fill" />
       </div>
 
       <div className={styles.cardContainer}>
