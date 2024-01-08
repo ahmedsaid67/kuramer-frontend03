@@ -67,22 +67,23 @@ const Layout = ({ children }) => {
   }, [dispatch]);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.contentWrapper}>
-        {isPanelPage ? (
-          <div className={styles.panelContainer}>
-            <Sidebar />
-            <div className={styles.panelContent}>{children}</div>
-          </div>
-        ) : (
-          <div className={styles.pageContainer}>
-            <Navbar />
-            <div className={styles.pageContent}>{children}</div>
-          </div>
-        )}
-      </div>
-      <Footer />
-    </div>
+     <>
+            {isPanelPage ? (
+                    <Sidebar>
+                      {children}
+                    </Sidebar>):(
+              <div className={styles.container}>
+                <div className={styles.contentWrapper}>
+                    <div className={styles.pageContainer}>
+                      <Navbar />
+                      <div className={styles.pageContent}>{children}</div>
+                      
+                    </div>
+                </div>    
+                <Footer />
+              </div>
+            )}
+    </>
   );
 };
 
