@@ -46,7 +46,7 @@ function YayinlarimizdanSecmeler() {
           Bu çerçevede yayınlarımızdan hazırladığımız bazı seçme metinleri daha özlü ve kolay okunabilir formatta okuyucularımızın erişimine sunmuş bulunuyoruz.
         </h4>
       </div>
-      <Image src="/başlıkgörseli.jpg" alt="Logo" layout="fill" />
+      <Image src="/baslikgorseli.jpg" alt="Logo" layout="fill" />
     </div>
 
 
