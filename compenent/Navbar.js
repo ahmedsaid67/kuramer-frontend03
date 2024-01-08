@@ -25,7 +25,7 @@ const Navbar = () => {
 
   async function getIndex() {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/appname/menuitems/menu/selected/");
+      const response = await axios.get("http://127.0.0.1:8000/api/appname/menuitems/menu/selected/get_active/");
       const sortedMenuItems = response.data.sort((a, b) => a.order - b.order);
       setMenuItems(sortedMenuItems);
       console.log("sorted items:", sortedMenuItems);
