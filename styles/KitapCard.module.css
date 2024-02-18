@@ -1,0 +1,22 @@
+/* styles/KitapCard.module.css */
+
+.kitapCard {
+    border: 1px solid #ddd;
+    margin: 10px;
+    padding: 10px;
+    display: flex;
+  }
+  
+  .kitapImage {
+    position: relative;
+    width: 100px; /* veya istediğiniz bir genişlik */
+    height: 150px; /* veya istediğiniz bir yükseklik */
+    margin-right: 10px;
+  }
+  
+  .kitapDetails {
+    flex-grow: 1;
+  }
+  
+  /* Diğer stillemeleri ekleyebilirsiniz. */
+  

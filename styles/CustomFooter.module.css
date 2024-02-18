@@ -1,0 +1,151 @@
+/* İlk bölümdeki fontlar sabit tutuldu */
+.customFooter {
+  background-color: #333; /* Açık gri tonu */
+  color: #f5f5f5;
+  padding: 40px 0; /* Daha geniş padding */
+  font-family: 'Open Sans', sans-serif;
+  width: 100%;
+}
+
+.footerContent {
+display: flex;
+justify-content: center;
+flex-wrap: wrap; /* İçeriklerin ekran genişliğine sığmadığı durumda alt satıra geçmesini sağlar */
+min-width: 0; /* Flex child'ların daralmamasını sağlar */
+width: 100%; /* Tam genişlik */
+padding: 0 20px;
+
+}
+
+.footerSection {
+flex: 1; /* Esnek büyüme */
+margin: 30px 15px; /* İstenilen marjı ayarlayın */
+padding: 0 15px; /* İstenilen padding'i ayarlayın */
+min-width: 180px; /* Minumum genişlik, ancak bu ekranın genişliğine bağlı olarak ayarlanmalı */
+}
+.rightCizgi{
+  border-right: 2px solid #444; /* Sekmeler arası ayrım */
+}
+
+.footerSection:first-child {
+  border-left: none; /* İlk sekmeye sınır ekleme */
+}
+
+.footerSection h3 {
+  font-size: 22px; /* Büyütülmüş başlık boyutu */
+  margin-bottom: 20px; /* Artırılmış alt boşluk */
+}
+
+.footerSection p, .footerSection a {
+  line-height: 1.8; /* Line height korundu */
+  font-size: 14px;
+}
+.footerSection ul {
+
+  padding-left: 15px; /* Sol padding'i sıfırla */
+}
+
+.footerSection a {
+  text-decoration: none;
+  transition: color 0.3s; /* Renk değişimi için geçiş efekti */
+}
+
+.footerSection a:hover {
+  color: #0056b3; /* Link hover efekti */
+  text-decoration: underline;
+}
+
+.footerBottom {
+  text-align: center;
+  margin-top: 40px; /* Artırılmış üst boşluk */
+  font-size: 16px; /* Artırılmış font boyutu */
+}
+
+.socialIcons {
+display: flex;
+justify-content: flex-start; /* Sola hizalama */
+}
+
+.socialIcons a {
+overflow: hidden;
+border-radius: 50%;
+margin-right: 30px; /* Sağ tarafta marj */
+}
+
+.socialIcons img {
+width: 35px;
+height: 35px;
+border-radius: 50%;
+background-color: #fff;
+border: 0.1px solid #000;
+
+}
+
+/* Mobil cihazlar için medya sorgusu - Daha ayrıntılı */
+@media (max-width: 768px) {
+  .footerContent {
+      flex-direction: column;
+      align-items: center;
+      padding-left: 0;
+  }
+
+  .footerSection {
+      width: 100%; /* Tam genişlik */
+      text-align: center; /* Merkezlenmiş metin */
+      padding-left: 0;
+  }
+
+  .socialIcons {
+    justify-content: center; 
+
+  }
+
+  .socialIcons a {
+
+    margin-right: 10px; /* Sağ tarafta marj */
+    }
+
+  .socialIcons img {
+    width: 25px;
+    height: 25px;
+  }
+  .footerSection ul {
+    list-style-type: none; /* Noktaları kaldır */
+    padding-left: 0; /* Sol padding'i sıfırla */
+}
+
+.footerSection ul li {
+    margin-bottom: 10px; /* Liste öğeleri arasında boşluk */
+}
+
+.socialIcons {
+  
+  justify-content: center; 
+}
+.rightCizgi {
+  border-right: none; /* Mobil cihazlarda sağ çizgiyi kaldır */
+}
+}
+
+/* 768px ve 950px arasındaki ekranlar için medya sorgusu */
+
+
+/* 1000px ve 1350px arasındaki ekranlar için medya sorgusu */
+@media (min-width: 768px) and (max-width: 1350px) {
+.footerSection {
+  flex: 1 1 200px; /* Genişlik küçültüldü */
+}
+
+.footerSection h3 {
+    font-size: 18px; /* Başlık font boyutunu küçült */
+}
+.socialIcons a {
+
+  margin-right: 10px; /* Sağ tarafta marj */
+  }
+.socialIcons img {
+    width: 25px; /* Sosyal medya ikon boyutunu küçült */
+    height: 25px;
+}
+}
+

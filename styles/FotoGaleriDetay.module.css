@@ -1,0 +1,154 @@
+
+.galleryContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.bannerImage {
+  position: relative;
+  width: 100%;
+  height: 50vh;
+  overflow: hidden;
+  z-index: 1;
+  text-align: center;
+  background-color: #333;
+}
+
+.titleContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  z-index: 2;
+}
+
+.titleContainer h1 {
+  font-size: 3rem;
+  margin: 0;
+  color: black;
+}
+
+.albumCard {
+  margin: 10px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  width: 300px;
+}
+
+.albumImage {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.albumTitle {
+  margin-top: 10px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+  display: block;
+}
+
+.modalContent {
+  width: 56.25vw; /* 16:9 oranını korumak için genişlik ayarı */
+  height: 70vh; /* Total modal alanının %70'ini kaplamak için yükseklik ayarı */
+  position: relative;
+}
+
+.modalContent .upperSection {
+  height: 70%; /* Upper section %100 yükseklik */
+  width: 100%; /* Upper section %100 genişlik */
+  position: relative;
+  overflow: hidden; /* Orijinal resmin sınırlarını belirlemek için overflow:hidden ayarı */
+}
+
+.modalContent .upperSection img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Resmin tam olarak sığmasını sağlamak için object-fit: contain ayarı */
+}
+
+.modalContent .upperSection .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Orijinal resmin üstüne siyah bir overlay eklemek için background-color ayarı */
+}
+
+.modalContent .lowerSection {
+  height: 30%; /* Lower section %30 yükseklik */
+  width: 100%; /* Lower section %100 genişlik */
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  background-color: #fff; /* Lower section arka plan rengi */
+}
+
+.modalContent .lowerSection .thumbnailContainer {
+  width: 25%; /* Dört resim yan yana sığacak şekilde ayarlandı */
+  cursor: pointer;
+  position: relative;
+}
+
+.modalContent .lowerSection .thumbnailImage {
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 oranında resimler için padding-top ayarı yapıldı */
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.modalOverlay {
+  background-color: rgba(0, 0, 0, 0.7); /* Adjust opacity as needed */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+
+
+
+
+.imageContainer:hover {
+  opacity: 0.8; /* Adjust opacity and other styles as desired */
+}
+
+
+
+@media screen and (max-width: 1100px) {
+  .bannerImage {
+    height: 40vh;
+  }
+
+  .titleContainer {
+    width: 70%;
+  }
+
+  .titleContainer h1 {
+    font-size: 2.5rem;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .bannerImage {
+    height: 30vh;
+  }
+
+  .titleContainer {
+    width: 90%;
+  }
+
+  .titleContainer h1 {
+    font-size: 2rem;
+  }
+}

@@ -1,0 +1,91 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #d4cfca;
+  color: #222;
+  margin-bottom: 1px;
+  padding-bottom: 60px;
+  padding-top: 60px;
+}
+
+.mainContent {
+  display: flex;
+  align-items: stretch; /* İçerikleri dikey eksen boyunca esnetir */
+  width: 90%;
+  margin: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Kutu gölgesi */
+  border-radius: 8px; /* Köşeleri yuvarlat */
+  overflow: hidden; /* Taşma olan kısımları gizle */
+}
+
+.leftContent, .rightContent {
+  flex: 1; /* Her iki bölüm de eşit genişlikte */
+  display: flex;
+  flex-direction: column; /* İçerikleri dikey olarak sırala */
+}
+
+.textContainer {
+  padding: 20px;
+  display: flex;
+  flex-direction: column; /* İçerikleri dikey olarak sırala */
+  justify-content: center; /* İçeriği dikey olarak ortala */
+}
+
+.rightImage {
+  width: 100%;
+  height: 100%; /* Görselin yüksekliğini artır */
+  object-fit: cover; /* Görselin oranını koruyarak alanı doldur */
+}
+
+.customButton {
+  background-color: #2e5077;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border-radius: 5px;
+}
+
+.customButton:hover {
+  background-color: #5a7a9f;
+}
+
+.baslik, .altbaslik, .metin {
+  margin: 10px 0; /* Biraz boşluk ekle */
+}
+
+.baslik {
+  font-size: 24px;
+}
+
+.altbaslik {
+  font-size: 20px;
+}
+
+.metin {
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .mainContent {
+    flex-direction: column; /* Küçük ekranlarda içerikleri dikey sırala */
+  }
+
+  .leftContent, .rightContent {
+    width: 100%; /* Tam genişlik kullan */
+  }
+
+  .rightImage {
+    height: auto; /* Küçük ekranlarda görselin yüksekliğini otomatik ayarla */
+  }
+  .rightContent {
+    order: 1; /* This will place the right content at the top */
+  }
+
+  .leftContent {
+    order: 2; /* This will place the left content at the bottom */
+    /* ... other styles ... */
+  }
+}

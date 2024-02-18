@@ -1,0 +1,80 @@
+/* styles/YayinlarimizdanSecmeler.module.css */
+
+.bannerImage {
+  position: relative;
+  width: 100%;
+  height: 50vh;
+  overflow: hidden;
+  z-index: 1; /* Önceki değeri 999'dan düşürdüm, çünkü 999'dan büyük bir z-index değeri kullanılabilir */
+  text-align: center;
+  color: black;
+}
+
+.titleContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%; /* veya istediğiniz genişlik */
+  z-index: 2; /* Banner üzerindeki yazılarımızın ön planda olması için z-index değerini artırdık */
+}
+
+.titleContainer h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem; /* İstediğiniz boşluk eklenebilir */
+  color: black;
+}
+
+.textContainer{
+  padding: 20px;
+}
+
+.textContainer p{
+  font-size: 16px;
+}
+
+.cardContainer {
+  display: flex;
+  flex-wrap: wrap; /* Kartlar sığmadığı durumda bir sonraki satıra geçmesini sağlar */
+  justify-content: space-evenly;
+  align-items: flex-start;
+  padding: 1rem;
+}
+
+@media screen and (max-width: 1100px) {
+  .bannerImage {
+    height: 40vh;
+  }
+
+  .titleContainer h1 {
+    font-size: 2.5rem;
+  }
+
+  .cardContainer {
+    margin-inline: 4rem;
+  }
+
+  /* Diğer stillendirmeler buraya eklenebilir */
+}
+
+/* Mobil ekranlar için stil */
+@media screen and (max-width: 767px) {
+  .bannerImage {
+    height: 30vh;
+  }
+
+  .titleContainer h1 {
+    font-size: 2rem;
+  }
+
+  .textContainer p{
+    font-size: 14px;
+  }
+
+  .cardContainer {
+    margin-inline: 2rem;
+  }
+  
+
+  /* Diğer stillendirmeler buraya eklenebilir */
+}
