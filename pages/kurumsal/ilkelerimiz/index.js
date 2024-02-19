@@ -6,7 +6,7 @@ import TabPanel from '../../../compenent/TabPanel';
 import styles from '../../../styles/Ilkelerimiz.module.css';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-
+import BaslikGorsel from '../../../compenent/BaslikGorsel';
 
 function Index() {
   
@@ -54,25 +54,19 @@ function Index() {
         <title>İlkelerimiz | Kuramer</title>
       </Head>
 
-      <div className={styles.bannerImage}>
-        <div className={styles.titleContainer}>
-          <h1>İlkelerimiz</h1>
-        </div>
-        <Image src="/baslikgorseli.jpg" alt="Logo" layout="fill" />
-      </div>
+      <BaslikGorsel metin={"İlkelerimiz"} />
 
 
       <div className={styles.mainContainer}>
         <div className={styles.leftContainer}>
           <Tabs
             orientation={orientation}
-            variant="full-width"
+            variant="fullWidth"
             value={activeTab}
             onChange={handleTabChange}
             className={styles.verticalTabs}
             aria-label="Vertical tabs example"
             centered
-            wrapped
           >
             <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>İLKELERİMİZ</Typography>} value="ilkelerimiz" />
             <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>TEMEL İLKELER</Typography>} value="temelIlkeler" />

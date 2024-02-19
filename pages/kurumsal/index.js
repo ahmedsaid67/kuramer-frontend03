@@ -7,7 +7,9 @@ import styles from '../../styles/Kurumsal.module.css';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import BaslikGorsel from '../../compenent/BaslikGorsel';
-
+import axios from 'axios';
+import KamuoyuDuyurulariCardOge from '../../compenent/KamuoyuDuyurulariCardOge';
+import { API_ROUTES } from '../../utils/constants';
 
 
 function Index() {
@@ -15,6 +17,24 @@ function Index() {
   const router = useRouter();
   const [orientation, setOrientation] = useState('vertical'); // Default olarak 'vertical'
   const [isScrolTab, setIsScrolTab] = useState(false);
+  const [kamuoyuDuyurulari,setKamuoyuDuyurulari] = useState([])
+  const [visible, setVisible] = useState(12);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response1 = await axios.get(API_ROUTES.KAMUOYU_DUYURULARI_ACTIVE);
+        setKamuoyuDuyurulari(response1.data.results); // Değişken adını güncelle
+       
+
+      } catch (error) {
+        console.error('Hata oluştu:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
 
   useEffect(() => {
@@ -181,6 +201,11 @@ function Index() {
 
             <TabPanel value={activeTab} index="kamuoyu-duyurulari">
               <h2>Kamuoyu Duyuruları</h2>
+              <div className={styles.cardContainer}>
+                {kamuoyuDuyurulari.slice(0, visible).map((yayin, index) => (
+                  <KamuoyuDuyurulariCardOge key={index} yayin={yayin} />
+                ))}
+              </div>
               
             </TabPanel>
           </div>
