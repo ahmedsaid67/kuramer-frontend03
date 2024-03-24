@@ -55,6 +55,15 @@
   color: #2e5077;
 }
 
+.placeholder {
+  width: 100%;
+  height: 100vh; /* Banner'ınızın yüksekliğine göre ayarlayın */
+  background: #d4cfca;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
 
 @media only screen and (max-width: 768px) {

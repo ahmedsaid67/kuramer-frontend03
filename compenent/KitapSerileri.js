@@ -12,6 +12,18 @@ import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons
 import Slider from 'react-slick';
 import { API_ROUTES } from '../utils/constants';
 import Image from 'next/image';
+import Link from 'next/link';
+
+
+const convertToUrlFriendly = (text) => {
+  if (text && typeof text === 'string') {
+    const turkishCharacters = { 'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u' };
+    const cleanedText = text.trim().toLowerCase();
+    const urlFriendlyText = Array.from(cleanedText).map(char => turkishCharacters[char] || char).join('');
+    return urlFriendlyText.replace(/\s+/g, '-');
+  }
+  return '';
+};
 
 const CustomPrevArrow = (props) => {
   const { onClick } = props;
@@ -89,13 +101,19 @@ export default function KitapSerileri() {
     <>
     {kitapSerileri.length > 0 && (
         <div className={styles.container}>
-          <h1 className={styles.title}>Kitap Serileri</h1>
+          <Link href={"/yayinlar/kitaplar"}>
+            <h1 className={styles.title}>Kitap Serileri</h1>
+          </Link>
             <div className={styles.carouselContainer}>
               <Slider {...settings}>
                 {kitapSerileri.map((seri) => (
                   <div key={seri.id} className={styles.card}>
-                    <Image src={seri.kapak_fotografi} alt={seri.baslik} width={240} height={352} className={styles.cardImage} priority />
-                    <p className={styles.cardText}>{seri.baslik}</p>
+                    <Link href={`/yayinlar/kitaplar?tab=${convertToUrlFriendly(seri.baslik)}`}>
+                      <img src={seri.kapak_fotografi} alt={seri.baslik} width={240} height={352} className={styles.cardImage} loading="eager" />
+                    </Link>
+                    <Link href={`/yayinlar/kitaplar?tab=${convertToUrlFriendly(seri.baslik)}`}>
+                      <p className={styles.cardText}>{seri.baslik}</p>
+                    </Link>
                   </div>
                 ))}
               </Slider>

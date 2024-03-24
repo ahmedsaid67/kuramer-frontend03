@@ -9,7 +9,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider, DatePicker, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import trLocale from 'date-fns/locale/tr'; // Türkçe yerelleştirme için
 import { parseISO } from 'date-fns';
@@ -18,6 +18,11 @@ import Grid from '@mui/material/Grid';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { API_ROUTES } from '../../../utils/constants';
+import { formatISO } from 'date-fns';
+
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import PdfViewer from '../../../compenent/PdfViewer';
+
 
 const StyledTableCell = styled(TableCell)({
     fontWeight: 'bold',
@@ -45,7 +50,7 @@ export default function Eğitimler() {
       baslik: '',
       tarih:"",
       egitmen:"",
-      icerik:"",
+      pdfDosya: null,
       kapakFotografi: null,
       yayin: null,
       album:null,
@@ -75,8 +80,24 @@ export default function Eğitimler() {
     const [openDuzenlemeAlbumSecDialog, setDuzenlemeOpenAlbumSecDialog] = useState(false);
     const [ekleSecilenAlbumId, setEkleSecilenAlbumId] = useState(null);
 
+    const [showPdfViewer, setShowPdfViewer] = useState(false);
+    const [showPdfViewerEkle, setShowPdfViewerEkle] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+
     const user = useSelector((state) => state.user);
     const router = useRouter();
+
+
+    const handleClick = () => {
+      
+      if (selectedItem.pdf_dosya && typeof selectedItem.pdf_dosya === 'string' && selectedItem.pdf_dosya.startsWith('http')) {
+        window.open(selectedItem.pdf_dosya);
+      } else {
+
+        setShowPdfViewer(true);
+      }
+      
+    };
 
 
 
@@ -189,7 +210,7 @@ export default function Eğitimler() {
             baslik: '',
             tarih:"",
             egitmen:"",
-            icerik:"",
+            pdfDosya: null,
             kapakFotografi: null,
             yayin:null,
             album:null,
@@ -204,7 +225,6 @@ export default function Eğitimler() {
       const handleOpen = (item) => {
         setSelectedItem(item);
         setOpen(true);
-        console.log("item:",item)
       };
       const handleClose = () => {
         setOpen(false);
@@ -217,9 +237,8 @@ export default function Eğitimler() {
     
     
       const handleSave = (editedItem) => {
-        console.log("edititem:",editedItem)
   
-        if (!editedItem.baslik || !editedItem.kapak_fotografi || !editedItem.tarih || !editedItem.egitmen || !editedItem.icerik ) {
+        if (!editedItem.baslik || !editedItem.kapak_fotografi || !editedItem.tarih || !editedItem.egitmen || !editedItem.pdf_dosya ) {
           setUyariMesaji("Lütfen tüm alanları doldurunuz.");
           return;
         }
@@ -230,6 +249,10 @@ export default function Eğitimler() {
         // Kapak fotoğrafı için orijinal dosyayı kullan
         if (editedItem["kapak_fotografi_file"]) {
           formData.append('kapak_fotografi', editedItem["kapak_fotografi_file"]);
+        }
+
+        if (typeof editedItem["pdf_dosya"] === "object") {
+          formData.append("pdf_dosya", editedItem["pdf_dosya"]);
         }
 
 
@@ -251,7 +274,7 @@ export default function Eğitimler() {
   
         
         
-
+        setIsSaving(true);
         axios.put(API_ROUTES.EGITIMLER_DETAIL.replace("slug",editedItem.slug), formData)
           .then(response => {
             const updatedData = data.map(item => item.id === editedItem.id ? response.data : item);
@@ -262,6 +285,9 @@ export default function Eğitimler() {
           .catch(error => {
             console.error('Güncelleme sırasında hata oluştu:', error);
             setSaveError("Veri güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz.");  // Hata mesajını ayarla
+          })
+          .finally(() => {
+            setIsSaving(false); // İşlem tamamlandığında veya hata oluştuğunda
           });
       };
     
@@ -270,7 +296,7 @@ export default function Eğitimler() {
     
       const handleAddNewItem = () => {
 
-        if (!newItem.baslik || !newItem.kapakFotografi || !newItem.tarih || !newItem.egitmen || !newItem.icerik) {
+        if (!newItem.baslik || !newItem.kapakFotografi || !newItem.tarih || !newItem.egitmen || !newItem.pdfDosya) {
 
           setUyariMesajiEkle("Lütfen tüm alanları doldurunuz.");
           return;
@@ -283,7 +309,7 @@ export default function Eğitimler() {
         formData.append("baslik", newItem["baslik"]);
         formData.append("tarih", newItem["tarih"]);
         formData.append("egitmen", newItem["egitmen"]);
-        formData.append("icerik", newItem["icerik"]);
+        formData.append("pdf_dosya", newItem["pdfDosya"]);
         if (newItem.yayin){
           formData.append("yayin_id", newItem.yayin.id);
         }
@@ -293,6 +319,7 @@ export default function Eğitimler() {
         }
         
 
+        setIsSaving(true); 
         axios.post(API_ROUTES.EGITIMLER, formData)
           .then(response => {
             // Mevcut sayfayı yeniden yüklüyoru
@@ -310,8 +337,11 @@ export default function Eğitimler() {
           })
           .catch(error => {
             console.error('Yeni veri eklerken hata oluştu:', error);
-            setSaveError("Yeni veri eklerken hata oluştu. Lütfen tekrar deneyiniz."); 
-          });
+            setSaveError("Yeni veri eklemesi sırasında bir hata meydana geldi. Lütfen işleminizi tekrar gerçekleştirmeyi deneyiniz."); 
+          })
+          .finally(() => {
+            setIsSaving(false); // İşlem tamamlandığında veya hata oluştuğunda
+          })
       };
       
       
@@ -333,7 +363,6 @@ export default function Eğitimler() {
     };
     const handleDeleteSelected = () => {
       setDeleteError('');
-      console.log("deleted:", selectedRows);
       const selectedIds = Object.keys(selectedRows).filter(id => selectedRows[id]);
     
       axios.post(API_ROUTES.EGITIMLER_DELETE, { ids: selectedIds })
@@ -390,51 +419,21 @@ export default function Eğitimler() {
     
 
     const handleFileChange = (event, fieldName) => {
-        const file = event.target.files[0];
-      
-        if (file) {
+      const file = event.target.files[0];
+    
+      if (file) {
 
-          // file binary bir veri base64 ile metin tabanlı dosya haline getiriyoruz bu sayede
-          // fronten tarafında bu dosyayı sunma imkanı buluyoruz.
-          // binary dosya doğrudan backende gönderilebilir. oradan kaydedilip apiden çekildiğinde
-          // veri tarayıcı yolu ile geldiğinden binary olsa da gösterimi mümkün.
-          // bu tantana js nin çalışma prensiplerinden ötürüdür.
-          // biz burada dosyayı evvele hemen backende atmadan ön yüzde göstermek istediğimizden
-          // base64 e çeviririz.
-          if (fieldName === "kapak_fotografi") {
-            console.log("photo:",file)
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              setSelectedItem((prevItem) => ({
-                ...prevItem,
-                [fieldName]: e.target.result,
-                [fieldName + '_file']: file,
-              }));
-            };
-            reader.readAsDataURL(file);
-            event.target.value = '';
-
-          } 
-                }
-    };
-
-      const handleRemoveImage = (fieldName) => {
-        setSelectedItem((prevItem) => ({
-          ...prevItem,
-          [fieldName]: null,
-        }));
-      
-
-      };
-
-
-      const handleFileChangeEkle = (event, fieldName) => {
-        const file = event.target.files[0];
-        if (fieldName === "kapakFotografi") {
-          console.log("photo:",file)
+        // file binary bir veri base64 ile metin tabanlı dosya haline getiriyoruz bu sayede
+        // fronten tarafında bu dosyayı sunma imkanı buluyoruz.
+        // binary dosya doğrudan backende gönderilebilir. oradan kaydedilip apiden çekildiğinde
+        // veri tarayıcı yolu ile geldiğinden binary olsa da gösterimi mümkün.
+        // bu tantana js nin çalışma prensiplerinden ötürüdür.
+        // biz burada dosyayı evvele hemen backende atmadan ön yüzde göstermek istediğimizden
+        // base64 e çeviririz.
+        if (fieldName === "kapak_fotografi") {
           const reader = new FileReader();
           reader.onload = (e) => {
-            setNewItem((prevItem) => ({
+            setSelectedItem((prevItem) => ({
               ...prevItem,
               [fieldName]: e.target.result,
               [fieldName + '_file']: file,
@@ -443,15 +442,65 @@ export default function Eğitimler() {
           reader.readAsDataURL(file);
           event.target.value = '';
 
-        } 
-      };
+        } else {
+
+              
+
+              setSelectedItem((prevItem) => ({
+                  ...prevItem,
+                  [fieldName]: file,
+              }));
+
+              event.target.value = '';     
+        
+        }
+              }
+  };
+
+    const handleRemoveImage = (fieldName) => {
+      setSelectedItem((prevItem) => ({
+        ...prevItem,
+        [fieldName]: null,
+      }));
     
-      const handleRemoveImageEkle = (fieldName) => {
-        setNewItem(prevItem => ({
-          ...prevItem,
-          [fieldName]: null
-        }));
-      };
+
+    };
+
+
+    const handleFileChangeEkle = (event, fieldName) => {
+      const file = event.target.files[0];
+      if (fieldName === "kapakFotografi") {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setNewItem((prevItem) => ({
+            ...prevItem,
+            [fieldName]: e.target.result,
+            [fieldName + '_file']: file,
+          }));
+        };
+        reader.readAsDataURL(file);
+        event.target.value = '';
+
+      } else {
+        setNewItem((prevItem) => ({
+                ...prevItem,
+                [fieldName]: file,
+            }));
+
+            event.target.value = '';     
+      }
+    };
+  
+    const handleRemoveImageEkle = (fieldName) => {
+      setNewItem(prevItem => ({
+        ...prevItem,
+        [fieldName]: null
+      }));
+    };
+
+    const handleClickEkle = () =>{
+      setShowPdfViewerEkle(true);
+    }
 
 
     const handleOpenYayinSecDialog = () => {
@@ -474,7 +523,6 @@ export default function Eğitimler() {
     const handleYayinSec = () => {
       const secilenYayin = videoGaleri.find(yayin => yayin.id === secilenYayinId);
       setSelectedItem({ ...selectedItem, yayin: secilenYayin });
-      console.log("yayin:",secilenYayin)
       handleDuzenlemeCloseYayinSecDialog();
     };
 
@@ -519,7 +567,6 @@ export default function Eğitimler() {
       const handleAlbumSec = () => {
         const secilenAlbum = fotoGaleri.find(album => album.id === secilenAlbumId);
         setSelectedItem({ ...selectedItem, album: secilenAlbum });
-        console.log("yayin:",secilenAlbum)
         handleDuzenlemeCloseAlbumSecDialog();
       };
 
@@ -571,8 +618,12 @@ export default function Eğitimler() {
         fontWeight: 600,
         color: '#333',
         padding: '8px 0', // Üst ve alt padding
-        // Sağ taraftan da bir miktar boşluk ekleyebilirsiniz
-        width:"320px"
+        // Metin tek satırda gösterilecek ve taşma durumunda "..." ile kısaltılacak
+        whiteSpace: 'nowrap', // Metni tek satırda tutar
+        overflow: 'hidden', // Ekstra metni gizler
+        textOverflow: 'ellipsis', // Gizlenen metnin sonuna "..." ekler
+        width: '320px' // Varsayılan genişlik. Gerekirse ayarlayabilirsiniz
+        // Sağ taraftan da bir miktar boşluk eklemek isterseniz marginRight özelliğini kullanabilirsiniz.
       });
       
       const StyledCheckbox = styled(Checkbox)({
@@ -599,6 +650,12 @@ export default function Eğitimler() {
       function truncateText(text, maxLength) {
         return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
       }
+
+      const formatDateWithoutTimeZone = (dateString) => {
+        const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat('tr-TR', options).format(date);
+      };
 
 
 
@@ -636,7 +693,7 @@ export default function Eğitimler() {
                         <TableCell style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#fff' }}>Tarih</TableCell>
                         <TableCell style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#fff' }}>Eğitmen</TableCell>
                         <TableCell style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#fff' }}>Kapak Fotoğrafı</TableCell>
-                        <TableCell style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#fff' }}>İçerik</TableCell>
+                        <TableCell style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#fff' }}>PDF Dosya</TableCell>
                         <TableCell style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#fff' }}>Yayın</TableCell>
                         <TableCell style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#fff' }}>Albüm</TableCell>
                         <TableCell style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#fff' }}>Durum</TableCell>
@@ -658,14 +715,14 @@ export default function Eğitimler() {
                               <span>{truncateText(row.baslik, 8)}</span>
                             </Tooltip>
                           </TableCell>
-                          <TableCell style={{ fontSize: '0.75rem' }}>{row.tarih}</TableCell>
+                          <TableCell style={{ fontSize: '0.75rem' }}>{formatDateWithoutTimeZone(row.tarih)}</TableCell>
                           <TableCell style={{ fontSize: '0.75rem', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             <Tooltip title={row.egitmen} placement="top">
                               <span>{truncateText(row.egitmen, 8)}</span>
                             </Tooltip>
                           </TableCell>
                           <TableCell style={{ fontSize: '0.75rem' }}>{row.kapak_fotografi ? 'Mevcut' : 'Mevcut Değil'}</TableCell>
-                          <TableCell style={{ fontSize: '0.75rem' }}>{row.icerik ? 'Mevcut' : 'Mevcut Değil'}</TableCell>
+                          <TableCell style={{ fontSize: '0.75rem' }}>{row.pdf_dosya ? 'Mevcut' : 'Mevcut Değil'}</TableCell>
                           <TableCell style={{ fontSize: '0.75rem' }}>{row.yayin ? 'Mevcut' : 'Mevcut Değil'}</TableCell>
                           <TableCell style={{ fontSize: '0.75rem' }}>{row.album ? 'Mevcut' : 'Mevcut Değil'}</TableCell>
                           <TableCell style={{ fontSize: '0.75rem' }}>{row.durum ? 'Aktif' : 'Pasif'}</TableCell>
@@ -730,17 +787,25 @@ export default function Eğitimler() {
             />
 
               <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={trLocale}>
-                  <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-                      <DatePicker
-                          label="Tarih"
-                          value={selectedItem && selectedItem.tarih ? parseISO(selectedItem.tarih) : null}
-                          onChange={(newValue) => {
-                              const formattedDate = newValue ? format(newValue, "yyyy-MM-dd") : '';
-                              setSelectedItem({ ...selectedItem, tarih: formattedDate });
-                          }}
-                          format="dd.MM.yyyy"
-                      />
-                  </div>
+                <DateTimePicker
+                  label="Tarih ve Saat"
+                  value={selectedItem && selectedItem.tarih ? new Date(selectedItem.tarih) : null}
+                  onChange={(newValue) => {
+                    // Check if newValue is a valid date
+                    const isValidDate = newValue && !isNaN(new Date(newValue).getTime());
+                    const formattedDateTime = isValidDate ? newValue.toISOString() : '';
+                    setSelectedItem({ ...selectedItem, tarih: formattedDateTime });
+                  }}   
+                  inputFormat="dd MMMM yyyy HH:mm"
+                  slotProps={{
+                    textField: { // TextField için slotProps kullanılıyor
+                      variant: 'outlined', // TextField özelleştirmeleri
+                      fullWidth: true,
+                      margin: 'normal',
+                      // Diğer TextField propsları burada belirtilebilir
+                    },
+                  }}
+                />
               </LocalizationProvider>
 
             
@@ -754,26 +819,7 @@ export default function Eğitimler() {
                 margin="normal"
             />
 
-            <TextField
-              label="İçerik"
-              multiline
-              rows={6}  // Bu varsayılan satır sayısını artırır, ancak minHeight ile kombinlenmelidir.
-              value={selectedItem ? selectedItem.icerik : ''}
-              onChange={(e) => setSelectedItem({ ...selectedItem, icerik: e.target.value })}
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              InputProps={{
-                style: {
-                  minHeight: '400px', // Çerçevenin minimum yüksekliğini artırır
-                },
-                inputProps: {
-                  style: {
-                    height: '380px', // textarea'nın yüksekliğini direkt olarak ayarlar
-                  }
-                }
-              }}
-            />
+           
 
 
             
@@ -824,11 +870,69 @@ export default function Eğitimler() {
                 />
             </div>
 
+            {/* PDF Dosyası */}
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                <div style={{ border: '2px dashed grey', width: '100%', height: '80px', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+                    {selectedItem && selectedItem.pdf_dosya ? (
+                        <>
+                            <Typography variant="subtitle1" style={{ marginBottom: '10px', position: 'absolute', top: 0, left: 10 }}>
+                                PDF Dosyası:
+                            </Typography>
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    cursor: 'pointer',
+                                    transition: 'color 0.2s',
+                                }}
+                                onClick={handleClick}
+                                onMouseDown={(e) => e.preventDefault()}
+                                onMouseUp={(e) => {/* Tıklandığında olacaklar */ }}
+                            >
+                                <PictureAsPdfIcon
+                                    style={{
+                                        fontSize: '80px',
+                                        color: 'red',
+                                        marginRight: '5px',
+                                        transition: 'color 0.2s',
+                                    }}
 
-            
+                                />
+                            </div>
+                            {/* X simgesi */}
+                            <IconButton
+                                style={{ fontSize: '20px', backgroundColor: 'transparent', color: 'red', position: 'absolute', top: 0, right: 0 }}
+                                onClick={() => handleRemoveImage("pdf_dosya")}
+                            >
+                                <CloseIcon />
+                            </IconButton>
+                        </>
+                    ) : (
+                        <>
+                        <Typography variant="subtitle1" style={{ marginBottom: '10px', position: 'absolute', top: 0, left: 10 }}>
+                                PDF Dosyası:
+                        </Typography>
+                        <label htmlFor="pdf_dosyaInput">
+                            <IconButton
+                                style={{ fontSize: '50px', color: 'green', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+                                component="span"
+                            >
+                                <AddIcon />
+                            </IconButton>
+                        </label>
+                        </>
+                    )}
+                </div>
 
-           
-
+                {/* Dosya Ekleme Input */}
+                <input
+                    type="file"
+                    id="pdf_dosyaInput"
+                    accept=".pdf"
+                    style={{ display: 'none' }}
+                    onChange={(e) => handleFileChange(e, "pdf_dosya")}
+                />
+            </div>
 
             {/* Yayın */}
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
@@ -925,10 +1029,12 @@ export default function Eğitimler() {
 
           <DialogActions>
               <Button onClick={() => handleSave(selectedItem)} color="primary">
-                  Kaydet
+              {isSaving ? <CircularProgress size={24} /> : "Kaydet"}
               </Button>
           </DialogActions>
       </Dialog>
+
+      {(showPdfViewer && <PdfViewer pdfDataFile={selectedItem?.pdf_dosya} setShowPdfViewer={setShowPdfViewer} showPdfViewer={showPdfViewer}  />)}
 
 
 
@@ -1041,17 +1147,24 @@ export default function Eğitimler() {
 
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={trLocale}>
             <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-                <DatePicker
-                    label="Tarih"
-                    value={newItem.tarih ? parseISO(newItem.tarih) : null}
+                <DateTimePicker
+                    label="Tarih ve Saat"
+                    value={newItem.tarih ? new Date(newItem.tarih) : null}
                     onChange={(newValue) => {
-                        const formattedDate = newValue ? format(newValue, "yyyy-MM-dd") : '';
-                        setNewItem({ ...newItem, tarih: formattedDate });
+                      // Check if newValue is a valid date
+                      const isValidDate = newValue && !isNaN(new Date(newValue).getTime());
+                      const formattedDateTime = isValidDate ? format(newValue, "yyyy-MM-dd'T'HH:mm:ss") : '';
+                      setNewItem({ ...newItem, tarih: formattedDateTime });
                     }}
-                    PopperProps={{
-                        component: CustomPopper
+                    slotProps={{
+                      textField: { // TextField için slotProps kullanılıyor
+                        variant: 'outlined', // TextField özelleştirmeleri
+                        fullWidth: true,
+                        margin: 'normal',
+                        // Diğer TextField propsları burada belirtilebilir
+                      },
                     }}
-                    format="dd MMMM yyyy" 
+                    inputFormat="dd MMMM yyyy HH:mm"
                 />
             </div>
         </LocalizationProvider>
@@ -1065,27 +1178,7 @@ export default function Eğitimler() {
           margin="normal"
         />
 
-        <TextField
-            label="İçerik"
-            multiline
-            rows={6} // Satır sayısını artırarak yüksekliği artırın
-            value={newItem.icerik}
-            onChange={(e) => setNewItem({ ...newItem, icerik: e.target.value })}
-            fullWidth
-            margin="normal"
-              variant="outlined"
-              InputProps={{
-                style: {
-                  minHeight: '400px', // Çerçevenin minimum yüksekliğini artırır
-                },
-                inputProps: {
-                  style: {
-                    height: '380px', // textarea'nın yüksekliğini direkt olarak ayarlar
-                  }
-                }
-              }}
-        />
-
+      
 
 
          <div style={{ textAlign: 'center', marginBottom: '20px',marginTop:"20px" }}>
@@ -1136,7 +1229,67 @@ export default function Eğitimler() {
         />
 
 
-        
+<div style={{ textAlign: 'center', marginBottom: '20px' }}>
+          <div style={{ border: '2px dashed grey', width: '100%', height: '80px', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+          {!newItem.pdfDosya ? (
+            <>
+            <Typography variant="subtitle1"  style={{ marginBottom: '10px', position: 'absolute', top: 0, left: 10 }}>
+                    PDF Dosyası:
+            </Typography>
+            <label htmlFor="pdf_dosyaInput">
+              <IconButton
+               style={{ fontSize: '50px', color: 'green', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+                component="span"
+              >
+                <PictureAsPdfIcon />
+              </IconButton>
+            </label>
+            </>
+          ) : (
+            <>
+            <Typography variant="subtitle1"  style={{ marginBottom: '10px', position: 'absolute', top: 0, left: 10 }}>
+                    PDF Dosyası:
+            </Typography>
+            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    cursor: 'pointer',
+                                    transition: 'color 0.2s',
+                                }}
+                                onClick={handleClickEkle}
+                                onMouseDown={(e) => e.preventDefault()}
+                                onMouseUp={(e) => {/* Tıklandığında olacaklar */ }}
+                            >
+                                <PictureAsPdfIcon
+                                    style={{
+                                        fontSize: '80px',
+                                        color: 'red',
+                                        marginRight: '5px',
+                                        transition: 'color 0.2s',
+                                    }}
+
+                                />
+                            </div>
+                            {/* X simgesi */}
+                            <IconButton
+                                style={{ fontSize: '20px', backgroundColor: 'transparent', color: 'red', position: 'absolute', top: 0, right: 0 }}
+                                onClick={() => handleRemoveImageEkle("pdfDosya")}
+                            >
+                                <CloseIcon />
+                            </IconButton>
+            </>
+          )}
+        </div>
+        </div>
+        <input
+          type="file"
+          id="pdf_dosyaInput"
+          accept="application/pdf"
+          style={{ display: 'none' }}
+          onChange={(e) => handleFileChangeEkle(e, "pdfDosya")}
+        />
+
 
 
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
@@ -1230,12 +1383,14 @@ export default function Eğitimler() {
         />
       </DialogContent>
 
+      {(showPdfViewerEkle && <PdfViewer pdfDataFile={newItem?.pdfDosya} setShowPdfViewer={setShowPdfViewerEkle} showPdfViewer={showPdfViewerEkle}  />)}
+
       {uyariMesajiEkle && <p style={{ color: 'red', marginLeft: '25px' }}>{uyariMesajiEkle}</p>}
       {saveError && <p style={{ color: 'red', marginLeft: '25px' }}>{saveError}</p>}
 
         <DialogActions>
           <Button onClick={handleAddNewItem} color="primary">
-            Ekle
+          {isSaving ? <CircularProgress size={24} /> : "Ekle"}
           </Button>
         </DialogActions>
       </Dialog>

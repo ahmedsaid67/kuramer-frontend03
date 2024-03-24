@@ -12,6 +12,7 @@ import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons
 import Slider from 'react-slick';
 import { API_ROUTES } from '../utils/constants';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const CustomPrevArrow = (props) => {
   const { onClick } = props;
@@ -42,7 +43,6 @@ export default function KuramerTv() {
       try {
         const response = await axios.get(apiUrl);
         setKitapSerileri(response.data.results)
-        console.log("tv:",response.data)
       } catch (error) {
         console.error('API çağrısı sırasında bir hata oluştu:', error.message);
       }
@@ -88,17 +88,25 @@ export default function KuramerTv() {
     ]
   };
 
+  
+
   return (
     <>
       {kitapSerileri.length > 0 && (
           <div className={styles.container}>
-            <h1 className={styles.title}>KuramerTv</h1>
-              <div className={styles.carouselContainer}>
+            <Link href={"/medyagaleri/videogaleri/kategori"}>
+              <h1 className={styles.title}>KuramerTv</h1>
+            </Link>
+            <div className={styles.carouselContainer}>
                 <Slider {...settings}>
                   {kitapSerileri.map((seri) => (
                     <div key={seri.id} className={styles.card}>
-                      <Image src={seri.kapak_fotografi} alt={seri.baslik} width={320} height={180} className={styles.cardImage} loading="eager" />
-                      <p className={styles.cardText}>{seri.baslik}</p>
+                      <a href={seri.url}  target="_blank" rel="noopener noreferrer">
+                        <Image src={seri.kapak_fotografi} alt={seri.baslik} width={320} height={180} className={styles.cardImage} loading="eager" />
+                      </a>
+                      <a href={seri.url}  target="_blank" rel="noopener noreferrer">
+                        <p className={styles.cardText}>{seri.baslik}</p>
+                      </a>
                     </div>
                   ))}
                 </Slider>

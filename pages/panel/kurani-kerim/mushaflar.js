@@ -50,6 +50,7 @@ export default function Mushaflar() {
     const [uyariMesajiEkle, setUyariMesajiEkle] = useState("");
     const [mushafKategoriler, setMushafKategoriler] = useState([]);
     const [selectedKategori, setSelectedKategori] = useState("");
+    const [isSaving, setIsSaving] = useState(false);
 
     
     const [showPdfViewer, setShowPdfViewer] = useState(false);
@@ -155,7 +156,6 @@ export default function Mushaflar() {
       const handleOpen = (item) => {
         setSelectedItem(item);
         setOpen(true);
-        console.log("item:",item)
         if (item.mushaf_kategori){
           setSelectedKategori(item.mushaf_kategori.id)
         }
@@ -170,7 +170,6 @@ export default function Mushaflar() {
     
     
       const handleSave = (editedItem,kategoriId) => {
-        console.log("edititem:",editedItem)
   
         if (!editedItem.baslik || !editedItem.kapak_fotografi || !editedItem.pdf_dosya || !kategoriId ) {
           setUyariMesaji("Lütfen tüm alanları doldurunuz.");
@@ -196,7 +195,7 @@ export default function Mushaflar() {
   
         
         
-
+        setIsSaving(true);
         axios.put(API_ROUTES.MUSHAFLAR_DETAIL.replace("id",editedItem.id), formData)
           .then(response => {
             const updatedData = data.map(item => item.id === editedItem.id ? response.data : item);
@@ -207,6 +206,9 @@ export default function Mushaflar() {
           .catch(error => {
             console.error('Güncelleme sırasında hata oluştu:', error);
             setSaveError("Veri güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz.");  // Hata mesajını ayarla
+          })
+          .finally(() => {
+            setIsSaving(false); // İşlem tamamlandığında veya hata oluştuğunda
           });
       };
     
@@ -228,6 +230,7 @@ export default function Mushaflar() {
         formData.append("pdf_dosya", newItem["pdfDosya"]);
         formData.append("mushaf_kategori_id", kategoriId);
 
+        setIsSaving(true);
         axios.post(API_ROUTES.MUSHAFLAR, formData)
           .then(response => {
             // Mevcut sayfayı yeniden yüklüyoru
@@ -245,8 +248,11 @@ export default function Mushaflar() {
           })
           .catch(error => {
             console.error('Yeni veri eklerken hata oluştu:', error);
-            setSaveError("Veri güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz."); 
-          });
+            setSaveError("Yeni veri eklemesi sırasında bir hata meydana geldi. Lütfen işleminizi tekrar gerçekleştirmeyi deneyiniz."); 
+          })
+          .finally(() => {
+            setIsSaving(false); // İşlem tamamlandığında veya hata oluştuğunda
+          })
       };
       
       
@@ -268,7 +274,6 @@ export default function Mushaflar() {
     };
     const handleDeleteSelected = () => {
       setDeleteError('');
-      console.log("deleted:", selectedRows);
       const selectedIds = Object.keys(selectedRows).filter(id => selectedRows[id]);
     
       axios.post(API_ROUTES.MUSHAFLAR_DELETE, { ids: selectedIds })
@@ -337,7 +342,6 @@ export default function Mushaflar() {
           // biz burada dosyayı evvele hemen backende atmadan ön yüzde göstermek istediğimizden
           // base64 e çeviririz.
           if (fieldName === "kapak_fotografi") {
-            console.log("photo:",file)
             const reader = new FileReader();
             reader.onload = (e) => {
               setSelectedItem((prevItem) => ({
@@ -377,7 +381,6 @@ export default function Mushaflar() {
       const handleFileChangeEkle = (event, fieldName) => {
         const file = event.target.files[0];
         if (fieldName === "kapakFotografi") {
-          console.log("photo:",file)
           const reader = new FileReader();
           reader.onload = (e) => {
             setNewItem((prevItem) => ({
@@ -671,7 +674,7 @@ export default function Mushaflar() {
 
           <DialogActions>
               <Button onClick={() => handleSave(selectedItem,selectedKategori)} color="primary">
-                  Kaydet
+                {isSaving ? <CircularProgress size={24} /> : "Kaydet"}
               </Button>
           </DialogActions>
       </Dialog>
@@ -793,7 +796,7 @@ export default function Mushaflar() {
                             {/* X simgesi */}
                             <IconButton
                                 style={{ fontSize: '20px', backgroundColor: 'transparent', color: 'red', position: 'absolute', top: 0, right: 0 }}
-                                onClick={() => handleRemoveImageEkle("pdf_dosya")}
+                                onClick={() => handleRemoveImageEkle("pdfDosya")}
                             >
                                 <CloseIcon />
                             </IconButton>
@@ -837,7 +840,7 @@ export default function Mushaflar() {
 
         <DialogActions>
           <Button onClick={()=>{handleAddNewItem(selectedKategori)}} color="primary">
-            Ekle
+            {isSaving ? <CircularProgress size={24} /> : "Ekle"}
           </Button>
         </DialogActions>
       </Dialog>

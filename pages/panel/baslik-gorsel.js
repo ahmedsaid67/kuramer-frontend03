@@ -43,6 +43,7 @@ export default function BaslikGorsel() {
     const [deleteError, setDeleteError] = useState('');
     const [uyariMesaji, setUyariMesaji] = useState("");
     const [uyariMesajiEkle, setUyariMesajiEkle] = useState("");
+    const [isSaving, setIsSaving] = useState(false);
 
     const user = useSelector((state) => state.user);
     const router = useRouter();
@@ -111,7 +112,6 @@ export default function BaslikGorsel() {
     
     
       const handleSave = (editedItem) => {
-        console.log("editedItem:",editedItem)
   
         if (!editedItem.name || !editedItem.img ) {
           setUyariMesaji("Lütfen tüm alanları doldurunuz.");
@@ -133,7 +133,7 @@ export default function BaslikGorsel() {
         // PDF dosyası
         
         
-
+        setIsSaving(true);
         axios.put(API_ROUTES.BASLIK_GORSEL_DETAIL.replace("id",editedItem.id), formData)
           .then(response => {
             // Mevcut sayfayı yeniden yüklüyoru
@@ -148,6 +148,9 @@ export default function BaslikGorsel() {
           .catch(error => {
             console.error('Güncelleme sırasında hata oluştu:', error);
             setSaveError("Veri güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz.");  // Hata mesajını ayarla
+          })
+          .finally(() => {
+            setIsSaving(false); // İşlem tamamlandığında veya hata oluştuğunda
           });
       };
     
@@ -167,7 +170,7 @@ export default function BaslikGorsel() {
         formData.append("durum", newItem["durum"]);
         formData.append("name", newItem["name"]);
 
-
+        setIsSaving(true); 
         axios.post(API_ROUTES.BASLIK_GORSEL, formData)
           .then(response => {
             // Mevcut sayfayı yeniden yüklüyoru
@@ -185,8 +188,11 @@ export default function BaslikGorsel() {
           })
         .catch(error => {
           console.error('Yeni veri eklerken hata oluştu:', error);
-          setSaveError("Yeni veri eklerken hata oluştu. Lütfen tekrar deneyiniz."); 
-        });
+          setSaveError("Yeni veri eklemesi sırasında bir hata meydana geldi. Lütfen işleminizi tekrar gerçekleştirmeyi deneyiniz."); 
+        })
+        .finally(() => {
+          setIsSaving(false); // İşlem tamamlandığında veya hata oluştuğunda
+        })
       };
       
       
@@ -208,7 +214,6 @@ export default function BaslikGorsel() {
     };
     const handleDeleteSelected = () => {
         setDeleteError('');
-        console.log("deleted:", selectedRows);
         const selectedIds = Object.keys(selectedRows).filter(id => selectedRows[id]);
       
         axios.post(API_ROUTES.BASLIK_GORSEL_DELETE, { ids: selectedIds })
@@ -278,7 +283,6 @@ export default function BaslikGorsel() {
           // biz burada dosyayı evvele hemen backende atmadan ön yüzde göstermek istediğimizden
           // base64 e çeviririz.
           if (fieldName === "img") {
-            console.log("photo:",file)
             const reader = new FileReader();
             reader.onload = (e) => {
               setSelectedItem((prevItem) => ({
@@ -307,7 +311,6 @@ export default function BaslikGorsel() {
       const handleFileChangeEkle = (event, fieldName) => {
         const file = event.target.files[0];
         if (fieldName === "img") {
-          console.log("photo:",file)
           const reader = new FileReader();
           reader.onload = (e) => {
             setNewItem((prevItem) => ({
@@ -503,7 +506,7 @@ export default function BaslikGorsel() {
 
           <DialogActions>
               <Button onClick={() => handleSave(selectedItem)} color="primary">
-                  Kaydet
+                {isSaving ? <CircularProgress size={24} /> : "Kaydet"}
               </Button>
           </DialogActions>
       </Dialog>
@@ -587,7 +590,7 @@ export default function BaslikGorsel() {
 
         <DialogActions>
           <Button onClick={handleAddNewItem} color="primary">
-            Ekle
+            {isSaving ? <CircularProgress size={24} /> : "Ekle"}
           </Button>
         </DialogActions>
       </Dialog>

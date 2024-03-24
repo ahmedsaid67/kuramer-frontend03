@@ -1,0 +1,263 @@
+
+.galleryContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+  
+  .bannerImage {
+    position: relative;
+    width: 100%;
+    height: 50vh;
+    overflow: hidden;
+    z-index: 1;
+    text-align: center;
+    background-color: #333;
+  }
+  
+  .titleContainer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    z-index: 2;
+  }
+  
+  .titleContainer h1 {
+    font-size: 3rem;
+    margin: 0;
+    color: black;
+  }
+  
+  .albumCard {
+    margin: 10px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    width: 340px;
+  }
+  
+  .albumImage {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .albumTitle {
+    margin-top: 10px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
+    display: block;
+  }
+  
+  .modalContent {
+    width: 56.25vw; /* 16:9 oranını korumak için genişlik ayarı */
+    height: 70vh; /* Total modal alanının %70'ini kaplamak için yükseklik ayarı */
+    position: relative;
+  }
+  
+  .modalContent .upperSection {
+    height: 70%; /* Upper section %100 yükseklik */
+    width: 100%; /* Upper section %100 genişlik */
+    position: relative;
+    overflow: hidden; /* Orijinal resmin sınırlarını belirlemek için overflow:hidden ayarı */
+  }
+  
+  .modalContent .upperSection img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Resmin tam olarak sığmasını sağlamak için object-fit: contain ayarı */
+  }
+  
+  .modalContent .upperSection .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Orijinal resmin üstüne siyah bir overlay eklemek için background-color ayarı */
+  }
+  
+  .modalContent .lowerSection {
+    height: 30%; /* Lower section %30 yükseklik */
+    width: 100%; /* Lower section %100 genişlik */
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    background-color: #fff; /* Lower section arka plan rengi */
+  }
+  
+  .modalContent .lowerSection .thumbnailContainer {
+    width: 25%; /* Dört resim yan yana sığacak şekilde ayarlandı */
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .modalContent .lowerSection .thumbnailImage {
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 oranında resimler için padding-top ayarı yapıldı */
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+  
+  .modalOverlay {
+    background-color: rgba(0, 0, 0, 0.7); /* Adjust opacity as needed */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
+  
+  
+  
+  
+  
+  .imageContainer:hover {
+    opacity: 0.8; /* Adjust opacity and other styles as desired */
+  }
+  
+  .noAlbumsMessage {
+    text-align: center; /* Metni ortalar */
+    margin-top: 100px; /* Üstten boşluk ekler */
+    margin-bottom: 100px;
+    font-size: 20px; /* Font boyutunu belirler */
+    color: #333; /* Metin rengini belirler */
+    font-weight: bold; /* Metni kalın yapar */
+  }
+  
+  
+  .noImagesMessage {
+    padding: 20px;
+    background-color: #f8d7da; 
+    color: #721c24;
+    border-radius: 5px;
+    margin: 20px 0;
+    text-align: center;
+    border: 1px solid #f5c6cb;
+  }
+  
+  .closeButton {
+    float: right; /* Butonu sağa yasla */
+    font-size: 20px; /* Font boyutunu ayarla */
+    border: none; /* Kenarlık kaldır */
+    background: none; /* Arka planı kaldır */
+    cursor: pointer; /* İmleç şeklini değiştir */
+  }
+  
+  
+  .otherAlbumsTitle {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  
+  
+  
+  .selectedAlbumCard {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Hafif bir gölge ekler */
+    padding-top: 25px;
+    padding-bottom: 25px;
+  
+    
+  }
+
+  .loader {
+    display: flex;
+    justify-content: center; /* Loader'ı yatay olarak ortala */
+    align-items: center; /* Loader'ı dikey olarak ortala */
+    height: 50vh; /* Loader'ın yüksekliğini viewport yüksekliğine eşitle */
+  }
+  
+  .errorMessage {
+    color: #D8000C; /* Hata metninin rengi, daha yumuşak bir kırmızı tonu */
+    font-size: 18px; /* Metin boyutu */
+    text-align: center; /* Metni ortala */
+    padding: 20px; /* İç boşluk */
+    border: 1px solid #FFBABA; /* Daha yumuşak bir kırmızı çerçeve */
+    border-radius: 8px; /* Köşeleri daha fazla yuvarlat */
+    margin: 60px auto; /* Üst ve alttan 20px boşluk, sağ ve solda otomatik merkezleme */
+    background-color: #FFD2D2; /* Daha açık bir arka plan rengi, hata mesajını yumuşatır */
+    max-width: 80%; /* Maksimum genişlik */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hafif bir gölge ekleyerek derinlik hissi verir */
+    transition: all 0.3s ease; /* Pürüzsüz bir geçiş efekti ekler */
+  }
+  
+  .errorMessage:hover {
+    transform: translateY(-2px); /* Fare ile üzerine gelindiğinde yukarı doğru hafif bir hareket */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Gölgeyi artırır ve daha belirgin hale getirir */
+  }
+  
+  
+  .noDataMessage {
+    text-align: center; /* Metni ortalar */
+    padding: 20px; /* Çevresine dolgu ekler */
+    font-size: 18px; /* Metin boyutunu ayarlar */
+    background-color: #2e5077; /* Arka plan rengi */
+    color: white;
+    border-radius: 8px; /* Kenar yuvarlaklığını ayarlar */
+    margin: 60px auto; /* Üst ve alttan boşluk bırakır ve yatayda ortalar */
+    max-width: 80%; /* Maksimum genişliği sınırlar */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Kutu gölgesi ekler */
+    border: 1px solid #1e3c5a; /* Kenarlık ekler */
+    transition: all 0.3s ease; /* Geçiş efekti ekler */
+  }
+  
+  .noDataMessage:hover {
+    transform: scale(1.02); /* Fare ile üzerine gelindiğinde büyütme efekti */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Gölgeyi artırır */
+  }
+  
+  .paginationContainer {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  
+  
+  @media screen and (max-width: 1100px) {
+    .bannerImage {
+      height: 40vh;
+    }
+  
+    .titleContainer {
+      width: 70%;
+    }
+  
+    .titleContainer h1 {
+      font-size: 2.5rem;
+    }
+  
+    .selectedAlbumCard {
+      margin-bottom: 30px; /* Mobil görünüm için alt boşluk */
+    }
+  }
+  
+  @media screen and (max-width: 767px) {
+    .bannerImage {
+      height: 30vh;
+    }
+  
+    .titleContainer {
+      width: 90%;
+    }
+  
+    .titleContainer h1 {
+      font-size: 2rem;
+    }
+  }

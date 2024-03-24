@@ -1,0 +1,170 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000899770;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+}
+
+
+.viewer {
+    position: relative;
+    background: white;
+    padding: 20px;
+    width: 90%; /* Ekranın yüzdesine göre maksimum genişlik */
+    height: 90%;
+    margin: auto;
+    border-radius: 10px; /* Kenarları yuvarlak yapmak için */
+}
+
+.mainImageContainer {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    margin-top: 30px;
+    height: 70%;
+}
+
+.close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: none;
+    border: none;
+    color: #2e5077;
+    font-size: 40px;
+    cursor: pointer;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    transform: translateY(-50%);
+}
+
+.prev, .next {
+    background: #2e5077;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    user-select: none;
+    position: absolute;
+}
+
+.prev {
+    
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.next {
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.thumbnailContainer {
+    overflow-x: hidden;
+    white-space: nowrap;
+    width: auto;
+    display: flex;
+    justify-content: flex-start;
+    transition: transform 0.5s ease-in-out;
+    margin-top: 20px;
+    padding: 10px 0;
+
+}
+
+.thumbnail, .thumbnailSelected {
+    width: 120px;
+    height: 80px;
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+    margin: 5px;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.thumbnailSelected {
+    outline: 3px solid #2e5077;
+    box-shadow: 0 0 10px rgba(46, 80, 119, 0.5);
+    transform: scale(1.05);
+}
+
+.thumbnail:not(.thumbnailSelected):hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+
+  
+
+  @media (max-width: 600px) {
+
+    .thumbnailContainer {
+        padding: 5px 0; /* Daha az padding kullan */
+      }
+    
+      .thumbnail, .thumbnailSelected {
+        width: 70px; /* Daha küçük genişlik */
+        height: 50px; /* Daha küçük yükseklik */
+        margin: 4px; /* Daha az boşluk */
+      }
+
+    .controls{
+        
+    }
+    .prev, .next {
+      font-size: 10px; /* Küçük ekranlarda ok boyutunu küçült */
+      padding: 4px; /* Küçük ekranlarda padding'i azalt */
+    }
+
+    .viewer{
+        height:50%;
+    }
+    
+    .cardImage {
+        width: 80%; /* İstediğiniz genişlik */
+        height: auto;
+        max-height: 80%;
+      }
+
+    .mainImageContainer {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+  
+  }
+
+  @media (min-width: 600px) and (max-width: 1024px) {
+
+    .cardImage {
+      width: 80%; /* İstediğiniz genişlik */
+      height: auto;
+      max-height: 80%;
+    }
+  
+    .viewer {
+      height: 60%;
+    }
+  
+  }
+  
+

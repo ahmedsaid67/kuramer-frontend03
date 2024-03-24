@@ -15,22 +15,31 @@
   .popupContent {
     position: relative;
     width: 95%;
-    max-width: 600px; /* Maksimum genişlik */
+    max-width: 800px; /* Maksimum genişlik */
   }
   
   .popupImage {
     width: 100%;
     height: auto;
-    max-height: 95vh;
+    max-height: 70vh;
   }
   
   .closeButton {
     position: absolute;
     top: 10px;
-    right: 15px;
+    right: 10px;
     border: none;
-    background: none;
+    border-radius: 5px;
+    background: #2e5077;
+    color: white;
     font-size: 24px;
     cursor: pointer;
   }
   
+
+  @media (max-width: 768px) {
+    .closeButton {
+      font-size: 12px;
+      border-radius: 2.5px;
+    }
+  }

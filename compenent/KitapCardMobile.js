@@ -1,17 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, CardContent, CardMedia, Typography } from '@mui/material';
+import {Typography, Container, Grid, Paper } from '@mui/material';
 import Link from 'next/link';
 
-const cardStyle = {
-  width: '100%',
-  marginBottom: 16,
-  border: '1px solid #ccc',
+
+const paperStyles = {
+  padding: 1.5,
+  display: 'flex',
+  flexDirection: 'column',
 };
 
-const mediaStyle = {
-  height: 250,
-  width: 170,
-  margin: 'auto',
+const readMoreStyle = {
+  marginTop: '8px',
+  fontSize: '14px',
+  color: '#007BFF',
+  cursor: 'pointer',
+  textDecoration: 'underline',
+};
+
+const containerStyles = {
+  paddingTop: 1,
+  paddingBottom: 1,
 };
 
 const titleStyle = {
@@ -27,11 +35,7 @@ const titleStyle = {
   WebkitBoxOrient: 'vertical',
 };
 
-const authorStyle = {
-  fontSize: '14px',
-  color: '#000',
-  marginBottom: '0.5rem',
-};
+  
 
 const summaryStyle = {
   marginTop: '16px',
@@ -51,45 +55,56 @@ const readMoreButtonStyle = {
 const KitapCardMobile = ({ kitap }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
+  const linkTo = `/yayinlar/kitaplar/${kitap.slug}`;
+
+
   const handleToggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
   };
 
   return (
-    <Card style={cardStyle}>
-      <Link href={`/Yayinlar/Kitaplar/${kitap.slug}`} passHref>
-        <div>
-          <CardMedia
-            component="img"
-            alt={kitap.ad}
-            height="250"
-            image={kitap.kapak_fotografi}
-            style={mediaStyle}
-          />
-        </div>
-      </Link>
-      <CardContent style={{ padding: '16px' }}>
-        <Link href={`/Yayinlar/Kitaplar/${kitap.slug}`} passHref>
-          <div style={titleStyle}>
-            <Typography variant="h4">
-              {kitap.ad}
-            </Typography>
-          </div>
-        </Link>
-        <Typography variant="h6" style={authorStyle}>
-          {kitap.yazar}
-        </Typography>
-        <Typography variant="body1" color="text.secondary" style={summaryStyle}>
-          <span style={{ fontWeight: 'bold' }}>Özet:</span>
-          {isCollapsed ? kitap.ozet.slice(0, 100) + '...' : kitap.ozet}
-          {kitap.ozet.length > 100 && (
-            <span style={readMoreButtonStyle} onClick={handleToggleCollapse}>
-              {isCollapsed ? 'Daha Fazla Göster' : 'Daha Az Göster'}
-            </span>
-          )}
-        </Typography>
-      </CardContent>
-    </Card>
+    <Container sx={containerStyles} maxWidth="lg">
+        <Paper elevation={3} sx={paperStyles}>
+          
+          <Grid container spacing={3}>
+            
+            <Grid item xs={12} md={4}>
+              <Link href={linkTo} passHref>
+                <img
+                  src={kitap.kapak_fotografi}
+                  alt={kitap.baslik}
+                  style={{ width: '100%', height: 'auto' }}
+                />
+              </Link>
+            </Grid>
+            
+            
+            <Grid item xs={12} md={8}>
+              <Link href={linkTo} passHref>
+                <Typography variant="h10" sx={titleStyle}>
+                  {kitap.ad}
+                </Typography>
+              </Link>
+              <Typography variant="subtitle1" color="body1" gutterBottom>
+                {kitap.yazar}
+              </Typography>
+              
+              <Typography variant="body2" color="text.secondary" sx={summaryStyle}>
+                <span style={{ fontWeight: 'bold' }}>Özet:</span>
+                {isCollapsed ? kitap.ozet.slice(0, 100) + '...' : kitap.ozet}
+                {kitap.ozet.length > 500 && (
+                  <Link href={linkTo} passHref>
+                    <Typography component="span"  sx={readMoreStyle}>
+                      {isCollapsed ? ' Daha Fazla Göster' : ' Daha Az Göster'}
+                    </Typography>
+                  </Link>
+                )}
+              </Typography>
+
+            </Grid>
+          </Grid>
+        </Paper>
+      </Container>
   );
 };
 

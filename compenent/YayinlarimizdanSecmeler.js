@@ -11,6 +11,7 @@ import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons
 import Slider from 'react-slick';
 import { API_ROUTES } from '../utils/constants';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const CustomPrevArrow = (props) => {
   const { onClick } = props;
@@ -36,7 +37,7 @@ export default function YayinlarimizdanSecmeler() {
 
   useEffect(() => {
     // API çağrısı için kullanılan endpoint
-    const apiUrl = API_ROUTES.YAYINLARIMIZDAN_SECMELER_ACTIVE;
+    const apiUrl = API_ROUTES.YAYINLARIMIZDAN_SECMELER_ACTIVE.replace("currentPage",1);
 
     const fetchData = async () => {
       try {
@@ -89,13 +90,19 @@ export default function YayinlarimizdanSecmeler() {
     <>
       {secmeler.length > 0 && (
           <div className={styles.container}>
-            <h1 className={styles.title}>Yayınlarımızdan Seçmeler</h1>
+            <Link href={"/yayinlarimizdan-secmeler"}>
+              <h1 className={styles.title}>Yayınlarımızdan Seçmeler</h1>
+            </Link>
               <div className={styles.carouselContainer}>
                 <Slider {...settings}>
                   {secmeler.map((seri) => (
                     <div key={seri.id} className={styles.card}>
-                      <Image src={seri.kapak_fotografi} alt={seri.baslik} width={240} height={352} className={styles.cardImage} loading="eager" />
-                      <p className={styles.cardText}>{seri.baslik}</p>
+                      <Link href="/yayinlarimizdan-secmeler" >
+                        <Image src={seri.kapak_fotografi} alt={seri.baslik} width={240} height={352} className={styles.cardImage} loading="eager" />
+                      </Link>
+                      <Link href="/yayinlarimizdan-secmeler" >
+                        <p className={styles.cardText}>{seri.baslik}</p>
+                      </Link>
                     </div>
                   ))}
                 </Slider>

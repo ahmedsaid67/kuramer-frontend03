@@ -1,155 +1,185 @@
-// Dışa çıkarılan stil nesneleri
-
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardMedia, Typography } from '@mui/material';
+import { Card, Grid, Container, Paper, CardContent, CardMedia, Typography } from '@mui/material';
 import Link from 'next/link';
 
-const mediaStyle = {
-  width: '240px',
-  height: '352px',
-  objectFit: 'cover',
+const titleStyle = {
+  fontSize: '20px',
+  fontFamily: 'sans-serif',
+  fontWeight: 550,
+  color: 'black',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  display: '-webkit-box',
+  WebkitBoxOrient: 'vertical',
+  '@media (max-width: 768px)': {
+    fontSize: '16px',
+  },
+  '@media (max-width: 600px)': {
+    fontSize: '14px',
+  },
+  marginBottom: 2,
 };
 
-const styles = {
-  card: {
-    width: '100%',
-    marginBottom: 4,
-    border: '1px solid #ccc',
-    display: 'flex',
-  },
-  contentContainer: {
-    flex: 1,
-    padding: '16px',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
-  title: {
-    fontSize: '20px',
-    fontFamily: 'sans-serif',
-    fontWeight: 'bold',
-    color: '#000',
-    marginBottom: '0.5rem',
-    cursor: 'pointer',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    display: '-webkit-box',
-    WebkitBoxOrient: 'vertical',
-  },
-  author: {
-    fontSize: '16px',
-    color: '#000',
-    marginBottom: '0.5rem',
-  },
-  detail: {
-    marginTop: '8px',
+const textStyle = {
+  fontSize: '15px',
+  color: 'black',
+  marginBottom: '8px',
+  '@media (max-width: 768px)': {
     fontSize: '14px',
-    color: '#000',
   },
-  summary: {
-    marginTop: '16px',
-    fontSize: '15px',
-    color: '#000',
-    whiteSpace: 'pre-line',
-  },
-  readMore: {
-    marginTop: '8px',
+  '@media (max-width: 600px)': {
     fontSize: '14px',
-    color: '#007BFF',
-    cursor: 'pointer',
-    textDecoration: 'underline',
   },
+};
+
+const containerStyles = {
+  paddingTop: 1,
+  paddingBottom: 1,
+  marginBottom:1,
+};
+
+const imageStyle = {
+  width: '95%', // Görsel genişliği
+  height: 'auto',
+  maxWidth: '300px', // Maksimum genişlik
+  marginBottom: '16px', // Altında boşluk
+};
+
+const paperStyles = {
+  padding: 2,
+  display: 'flex',
+  flexDirection: 'column',
+};
+
+const summaryStyle = {
+  marginTop: '16px',
+  fontSize: '15px',
+  color: '#000',
+  whiteSpace: 'pre-line',
+};
+
+const readMoreStyle = {
+  marginTop: '8px',
+  fontSize: '14px',
+  color: '#007BFF',
+  cursor: 'pointer',
+  textDecoration: 'underline',
 };
 
 function KitapCard({ kitap }) {
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const [windowWidth, setWindowWidth] = useState(0); 
+  const [windowWidth, setWindowWidth] = useState(0);
+
+  const linkTo = `/yayinlar/kitaplar/${kitap.slug}`;
+
+
+  const isTabletView = windowWidth < 600;
+  const isSmalScreen = windowWidth < 900;
 
   const handleToggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
   };
-  
+
   const handleResize = () => {
-    if (typeof window !== "undefined") { // window nesnesinin varlığını kontrol edin
+    if (typeof window !== 'undefined') {
       setWindowWidth(window.innerWidth);
       setIsCollapsed(true);
     }
   };
-  
+
   useEffect(() => {
-    if (typeof window !== "undefined") { // window nesnesinin varlığını kontrol edin
+    if (typeof window !== 'undefined') {
       window.addEventListener('resize', handleResize);
-  
-      // İlk değeri ayarlamak için de çağır
-      handleResize(); // Böylece bileşen yüklendiğinde doğru windowWidth değerini ayarlar
-  
+
+      // İlk değer ataması
+      handleResize();
+
       return () => {
         window.removeEventListener('resize', handleResize);
       };
     }
   }, []);
 
-  const linkTo = `/Yayinlar/Kitaplar/${kitap.slug}`;
+  let maxCharacters = 900;
+
+  if (windowWidth < 640) {
+    maxCharacters = 50;
+  } else if (640 <= windowWidth && windowWidth <= 768) {
+    maxCharacters = 150;
+  } else if (768 < windowWidth && windowWidth <= 1100) {
+    maxCharacters = 350;
+  } else if (1100 < windowWidth && windowWidth <= 1300) {
+    maxCharacters = 350;
+  }
 
   return (
-    <Card sx={styles.card}>
-      <Link href={linkTo} passHref>
-        <CardMedia
-          component="img"
-          sx={{
-            ...mediaStyle,
-            ...{
-              '@media (max-width: 768px)': { width: '170px', height: '250px' },
-            },
-          }}
-          className="mediaStyle"
-          image={kitap.kapak_fotografi}
-          alt={kitap.ad}
-        />
-      </Link>
-      <CardContent sx={styles.contentContainer}>
-        <div>
-          <Link href={linkTo} passHref>
-            <Typography variant="h3" sx={{ ...styles.title, ...(windowWidth <= 768 && { fontSize: '14px' }) }} >
-              {kitap.ad}
-            </Typography>
-          </Link>
-          <Typography variant="h3" sx={{ ...styles.author, ...(windowWidth <= 768 && { fontSize: '13px' }) }}>
-            {kitap.yazar}
-          </Typography>
-        </div>
-        <div>
-          <Typography variant="body2" color="text.secondary" sx={{ ...styles.detail, ...(windowWidth <= 768 && { fontSize: '13px' }) }} className="detailStyle">
-            <span style={{ fontWeight: 'bold', fontSize: windowWidth <= 768 ? '13px' : '14px' }}>Yayın Tarihi:</span> {kitap.yayin_tarihi}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ ...styles.detail, ...(windowWidth <= 768 && { fontSize: '13px' }) }} className="detailStyle">
-            <span style={{ fontWeight: 'bold', fontSize: windowWidth <= 768 ? '13px' : '14px' }}>Sayfa Sayısı:</span> {kitap.sayfa_sayisi}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ ...styles.detail, ...(windowWidth <= 768 && { fontSize: '13px' }) }} className="detailStyle">
-            <span style={{ fontWeight: 'bold', fontSize: windowWidth <= 768 ? '13px' : '14px' }}>ISBN:</span> {kitap.isbn}
-          </Typography>
-        </div>
-        {(windowWidth > 768 || window.innerWidth <= 1100) && (
-          <Typography variant="body2" color="text.secondary" sx={{ ...styles.summary, ...(windowWidth <= 768 && { display: 'none' }) }} className="summaryStyle">
-            <span style={{ fontWeight: 'bold' }}>Özet:</span>
-            {isCollapsed ? kitap.ozet.slice(0, 500) + '...' : kitap.ozet}
-            {kitap.ozet.length > 500 && (
-              <Typography component="span"  sx={styles.readMore} onClick={handleToggleCollapse}>
-                {isCollapsed ? ' Daha Fazla Göster' : ' Daha Az Göster'}
+    <Container sx={containerStyles} maxWidth="lg">
+      <Paper elevation={3} sx={paperStyles}>
+        <Grid container spacing={-10}>
+          <Grid item xs={6} md={4}>
+            <Link href={linkTo} passHref>
+              <img
+                src={kitap.kapak_fotografi}
+                alt={kitap.baslik}
+                style={imageStyle}
+              />
+            </Link>
+          </Grid>
+          <Grid item xs={6} md={8}>
+            <Link href={linkTo} passHref>
+              <Typography variant="h3" sx={titleStyle}>
+                {kitap.ad}
               </Typography>
-            )}
-          </Typography>
-        )}
-        {(windowWidth <= 768 && window.innerWidth > 480) && (
-          <Link href={linkTo} passHref>
-            <Typography variant="body2" sx={styles.readMore}>
-              Daha fazlası için tıklayınız
+            </Link>
+            <Typography variant="subtitle1" color="body1" gutterBottom sx={textStyle}>
+              <span style={{ fontWeight: 'bold' }}>Yazar:</span> {kitap.yazar}
             </Typography>
-          </Link>
-        )}
-      </CardContent>
-    </Card>
+            {isTabletView ? (
+              <>
+                <Typography variant="subtitle1" color="body1" gutterBottom sx={textStyle}>
+                  <span style={{ fontWeight: 'bold' }}>Yayın Tarihi:</span> {kitap.yayin_tarihi}
+                </Typography>
+                <Link href={linkTo} passHref>
+                  <Typography component="span" sx={readMoreStyle}>
+                    Daha Fazlası...
+                  </Typography>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Typography variant="subtitle1" color="body1" gutterBottom sx={textStyle}>
+                  <span style={{ fontWeight: 'bold' }}>Yayın Tarihi:</span> {kitap.yayin_tarihi}
+                </Typography>
+                <Typography variant="subtitle1" color="body1" gutterBottom sx={textStyle}>
+                  <span style={{ fontWeight: 'bold' }}>Sayfa Sayısı:</span> {kitap.sayfa_sayisi}
+                </Typography>
+                <Typography variant="subtitle1" color="body1" gutterBottom sx={textStyle}>
+                  <span style={{ fontWeight: 'bold' }}>ISBN:</span> {kitap.isbn}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={summaryStyle}>
+                  <span style={{ fontWeight: 'bold' }}>Özet:</span>
+                  {isCollapsed ? kitap.ozet.slice(0, maxCharacters) + '...' : kitap.ozet}
+                  {kitap.ozet.length > maxCharacters && !isSmalScreen ? (
+                    <Typography component="span" sx={readMoreStyle} onClick={handleToggleCollapse}>
+                      {isTabletView ? ' Daha Fazla Göster' : (isCollapsed ? ' Daha Fazla Göster' : ' Daha Az Göster')}
+                    </Typography>
+                  ) : (
+                    <Link href={linkTo} passHref>
+                      <Typography component="span" sx={readMoreStyle}>
+                        {isTabletView ? ' Daha Fazla Göster' : (isCollapsed ? ' Daha Fazla Göster' : ' Daha Az Göster')}
+                      </Typography>
+                    </Link>
+                  )
+                  
+                  }
+                </Typography>
+              </>
+            )}
+          </Grid>
+        </Grid>
+      </Paper>
+    </Container>
   );
 }
-
-export default KitapCard;
+  
+  export default KitapCard;

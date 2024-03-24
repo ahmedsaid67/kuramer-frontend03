@@ -12,7 +12,7 @@ const Temel = () => {
                     <p className={styles.metin}>
                       Dini konularda geniş çaplı yazılarımız ve özel konulara dair kısa makalelerimizle bilgi sunuyoruz. Detayları keşfetmek için davetlisiniz!
                     </p>
-                    <Link href="/TemelKonuKavram">
+                    <Link href="/temel-konu-kavramlar">
                       <button className={styles.customButton}>Daha fazlası için tıklayınız</button>
                     </Link>
                 </div>

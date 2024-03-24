@@ -6,7 +6,7 @@ import TabPanel from '../../../compenent/TabPanel';
 import styles from '../../../styles/Ilkelerimiz.module.css';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import BaslikGorsel from '../../../compenent/BaslikGorsel';
+import BaslikGorselDetay from '../../../compenent/BaslikGorselDetay';
 
 function Index() {
   
@@ -52,9 +52,10 @@ function Index() {
     <>
       <Head>
         <title>İlkelerimiz | Kuramer</title>
+        <link rel="icon" href="/kuramerlogo.png" />
       </Head>
 
-      <BaslikGorsel metin={"İlkelerimiz"} />
+      <BaslikGorselDetay metin={"İlkelerimiz"} link={"/kurumsal"} />
 
 
       <div className={styles.mainContainer}>

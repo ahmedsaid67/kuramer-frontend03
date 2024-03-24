@@ -13,7 +13,7 @@ function Index() {
   const [kutuphaneGorseller, setKutuphaneGorseller] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
-  const [activeTab, setActiveTab] = useState('kuramer-kutuphane');
+  const [activeTab, setActiveTab] = useState('kutuphane');
   const router = useRouter();
   const [orientation, setOrientation] = useState('vertical'); // Default olarak 'vertical'
 
@@ -40,7 +40,7 @@ function Index() {
     if (router.query.tab) {
       setActiveTab(router.query.tab);
     } else {
-      setActiveTab('kuramer-kutuphane');
+      setActiveTab('kutuphane');
     }
 
     // Ekran genişliğine bağlı olarak orientation'ı ayarla
@@ -70,11 +70,13 @@ function Index() {
   const handleImageClick = (index) => {
     setSelectedImageIndex(index);
     setModalOpen(true);
+    document.body.style.overflow = 'hidden';
   };
 
   const handleCloseModal = () => {
     setSelectedImageIndex(null);
     setModalOpen(false);
+    document.body.style.overflow = 'auto';
   };
 
 
@@ -82,6 +84,7 @@ function Index() {
     <>
       <Head>
         <title>Kütüphane | Kuramer</title>
+        <link rel="icon" href="/kuramerlogo.png" />
       </Head>
 
       <BaslikGorsel metin={"Kütüphane"} />
@@ -101,10 +104,19 @@ function Index() {
           centered
 
         >
+
           <Tab className={styles.tab}
             label={
               <Typography className={styles.tabLabel}>
-                KURAMER Kütüphane Programı
+                KÜTÜPHANE
+              </Typography>
+            }
+            value="kutuphane"
+          />
+          <Tab className={styles.tab}
+            label={
+              <Typography className={styles.tabLabel}>
+                KURAMER KÜTÜPHANE PROGRAMI
               </Typography>
             }
             value="kuramer-kutuphane"
@@ -112,7 +124,7 @@ function Index() {
           <Tab className={styles.tab}
             label={
               <Typography className={styles.tabLabel}>
-                KURAMER Veritabanı
+                KURAMER VERİTABANI
               </Typography>
             }
             value="kuramer-veritabani"
@@ -120,7 +132,7 @@ function Index() {
           <Tab className={styles.tab}
             label={
               <Typography className={styles.tabLabel}>
-                Literatür ve Arşivleme Çalışmaları
+                LİTERATÜR VE ARŞİVLEME ÇALIŞMALARI
               </Typography>
             }
             value="literatur-arsiv-calismalari"
@@ -131,6 +143,15 @@ function Index() {
 
         <div className={styles.rightContainer}>
           <div className={styles.verticalTabsContent}>
+          <TabPanel value={activeTab} index="kutuphane">
+              <h2>Kütüphane</h2>
+              <p>
+                Hoş geldiniz. KURAMER Kütüphane bölümü; KURAMER Kütüphane Programı, 
+                Veritabanı ve Literatür ile Arşivleme Çalışmaları başlıklarını içermektedir. 
+                Bu bölüm, Kur'an bilimleri araştırmalarınızı destekleyecek şekilde düzenlenmiştir.
+              </p>
+      
+            </TabPanel>
             <TabPanel value={activeTab} index="kuramer-kutuphane">
               <h2>KURAMER Kütüphane Programı</h2>
               <p>
@@ -164,7 +185,7 @@ function Index() {
               <div className={styles.imageGallery}>
                 {kutuphaneGorseller.map((image, index) => (
                   <div key={index} className={styles.thumbnailContainer} onClick={() => handleImageClick(index)}>
-                    <Image src={`${image}`} alt={`Kutuphane-${index}`} fill sizes="50vw" />
+                    <img src={`${image}`} alt={`Kutuphane-${index}`} />
                   </div>
                 ))}
               </div>
@@ -172,12 +193,10 @@ function Index() {
               {isModalOpen && selectedImageIndex !== null && (
                 <div className={styles.modalOverlay} onClick={handleCloseModal}>
                   <div className={styles.modalContent}>
-                    <Image
+                  <img
                       src={kutuphaneGorseller[selectedImageIndex]}
                       alt={`Kutuphane-${selectedImageIndex}`}
-
-                      width={800}
-                      height={600}
+                      style={{ width: "100%", height: 'auto' }}
                     />
                   </div>
                 </div>

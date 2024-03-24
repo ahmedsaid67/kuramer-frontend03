@@ -49,6 +49,7 @@ export default function Mushaflar() {
     const [uyariMesajiEkle, setUyariMesajiEkle] = useState("");
     const [personelTuru, setPersonelTuru] = useState([]);
     const [selectedTuru, setSelectedTuru] = useState("");
+    const [isSaving, setIsSaving] = useState(false);
 
     const user = useSelector((state) => state.user);
     const router = useRouter();
@@ -141,7 +142,6 @@ export default function Mushaflar() {
       const handleOpen = (item) => {
         setSelectedItem(item);
         setOpen(true);
-        console.log("item:",item)
 
 
         if(item.personel_turu){
@@ -158,9 +158,8 @@ export default function Mushaflar() {
     
     
       const handleSave = (editedItem,turId) => {
-        console.log("edititem:",editedItem)
   
-        if (!editedItem.ad || !editedItem.soyad || !editedItem.unvan || !turId ) {
+        if (!editedItem.ad || !editedItem.soyad || !turId ) {
           setUyariMesaji("Lütfen tüm alanları doldurunuz.");
           return;
         }
@@ -170,7 +169,6 @@ export default function Mushaflar() {
 
         // Kapak fotoğrafı için orijinal dosyayı kullan
         if (editedItem["img_file"] && editedItem["img"]) {
-          console.log("gorselvar")
           formData.append('img', editedItem["img_file"]);
         }
         
@@ -186,7 +184,7 @@ export default function Mushaflar() {
         // PDF dosyası
         
         
-
+        setIsSaving(true);
         axios.put(API_ROUTES.PERSONELLER_DETAIL.replace("id",editedItem.id), formData)
           .then(response => {
             const updatedData = data.map(item => item.id === editedItem.id ? response.data : item);
@@ -197,6 +195,9 @@ export default function Mushaflar() {
           .catch(error => {
             console.error('Güncelleme sırasında hata oluştu:', error);
             setSaveError("Veri güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz.");  // Hata mesajını ayarla
+          })
+          .finally(() => {
+            setIsSaving(false); // İşlem tamamlandığında veya hata oluştuğunda
           });
       };
     
@@ -205,7 +206,7 @@ export default function Mushaflar() {
     
       const handleAddNewItem = (turId) => {
 
-        if (!newItem.ad || !newItem.soyad || !newItem.unvan  || !turId ) {
+        if (!newItem.ad || !newItem.soyad  || !turId ) {
           setUyariMesajiEkle("Lütfen tüm alanları doldurunuz.");
           return;
         }
@@ -221,7 +222,8 @@ export default function Mushaflar() {
         formData.append("soyad", newItem["soyad"]);
         formData.append("unvan", newItem["unvan"]);
         formData.append("personel_turu_id", turId);
-
+        
+        setIsSaving(true); 
         axios.post(API_ROUTES.PERSONELLER, formData)
           .then(response => {
             // Mevcut sayfayı yeniden yüklüyoru
@@ -239,8 +241,11 @@ export default function Mushaflar() {
           })
           .catch(error => {
             console.error('Yeni veri eklerken hata oluştu:', error);
-            setSaveError("Veri güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz."); 
-          });
+            setSaveError("Yeni veri eklemesi sırasında bir hata meydana geldi. Lütfen işleminizi tekrar gerçekleştirmeyi deneyiniz."); 
+          })
+          .finally(() => {
+            setIsSaving(false); // İşlem tamamlandığında veya hata oluştuğunda
+          })
       };
       
       
@@ -262,7 +267,6 @@ export default function Mushaflar() {
     };
     const handleDeleteSelected = () => {
       setDeleteError('');
-      console.log("deleted:", selectedRows);
       const selectedIds = Object.keys(selectedRows).filter(id => selectedRows[id]);
     
       axios.post(API_ROUTES.PERSONELLER_DELETE, { ids: selectedIds })
@@ -331,7 +335,6 @@ export default function Mushaflar() {
           // biz burada dosyayı evvele hemen backende atmadan ön yüzde göstermek istediğimizden
           // base64 e çeviririz.
           if (fieldName === "img") {
-            console.log("photo:",file)
             const reader = new FileReader();
             reader.onload = (e) => {
               setSelectedItem((prevItem) => ({
@@ -360,7 +363,6 @@ export default function Mushaflar() {
       const handleFileChangeEkle = (event, fieldName) => {
         const file = event.target.files[0];
         if (fieldName === "img") {
-          console.log("photo:",file)
           const reader = new FileReader();
           reader.onload = (e) => {
             setNewItem((prevItem) => ({
@@ -529,7 +531,7 @@ export default function Mushaflar() {
             />
 
             <TextField
-                label="Ünvan"
+                label="Ünvan (Opsiyonel)"
                 value={selectedItem ? selectedItem.unvan : ''}
                 onChange={(e) => setSelectedItem({ ...selectedItem, unvan: e.target.value })}
                 fullWidth
@@ -608,7 +610,7 @@ export default function Mushaflar() {
 
           <DialogActions>
               <Button onClick={() => handleSave(selectedItem,selectedTuru)} color="primary">
-                  Kaydet
+                {isSaving ? <CircularProgress size={24} /> : "Kaydet"}
               </Button>
           </DialogActions>
       </Dialog>
@@ -646,7 +648,7 @@ export default function Mushaflar() {
         />
 
         <TextField
-          label="Ünvan"
+          label="Ünvan (Opsiyonel)"
           value={newItem.unvan}
           onChange={(e) => setNewItem({ ...newItem, unvan: e.target.value })}
           fullWidth
@@ -728,7 +730,7 @@ export default function Mushaflar() {
 
         <DialogActions>
           <Button onClick={()=>{handleAddNewItem(selectedTuru)}} color="primary">
-            Ekle
+            {isSaving ? <CircularProgress size={24} /> : "Ekle"}
           </Button>
         </DialogActions>
       </Dialog>

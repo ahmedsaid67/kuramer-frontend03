@@ -63,12 +63,10 @@ useEffect(() => {
         const res = await axios.get(API_ROUTES.USER_INFO);
         dispatch(loginSuccess());
         dispatch(setUser(res.data));
-        console.log("res:",res.data)
         setLoading(false);
       } catch (err) {
         setLoading(false);
         console.log(err);
-        console.log(API_ROUTES.USER_INFO);
       }
     }
 
@@ -100,7 +98,10 @@ useEffect(() => {
 
   if (isLoginPage) {
     // Render only the children components for login page
-    return <>{children}</>;
+    return <>
+    {children}
+    <Notifications/>
+    </>
   }
   
 

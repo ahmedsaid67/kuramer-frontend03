@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import styles from '../styles/SurguluBanner.module.css'
+import styles from '../styles/SurguluBanner.module.css';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
@@ -13,9 +13,7 @@ const SurguluBanner = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          API_ROUTES.SLIDERS_ACTIVE
-        );
+        const response = await axios.get(API_ROUTES.SLIDERS_ACTIVE);
         const sortedMenuItems = response.data.sort((a, b) => a.order - b.order);
         setSlides(sortedMenuItems);
       } catch (error) {
@@ -44,22 +42,25 @@ const SurguluBanner = () => {
 
   return (
     <>
-      {slides.length > 0 && (
+      {slides.length === 0 ? (
+        <div className={styles.placeholder}>
+        </div>
+      ) : (
         <div className={styles.slider}>
           <div>
             <div onClick={goToPrevious} className={styles.leftArrow}>
-            <FontAwesomeIcon icon={faChevronLeft} />
+              <FontAwesomeIcon icon={faChevronLeft} />
             </div>
             <div onClick={goToNext} className={styles.rightArrow}>
-            <FontAwesomeIcon icon={faChevronRight} /> 
+              <FontAwesomeIcon icon={faChevronRight} />
             </div>
           </div>
           <Link href={slides[currentIndex]?.url}>
-              <img
-                src={slides[currentIndex]?.img}
-                alt={`Slide ${currentIndex + 1}`}
-                className={styles.slide}
-              />
+            <img
+              src={slides[currentIndex]?.img}
+              alt={`Slide ${currentIndex + 1}`}
+              className={styles.slide}
+            />
           </Link>
           <div className={styles.dotsContainer}>
             {slides.map((slide, slideIndex) => (
@@ -79,6 +80,7 @@ const SurguluBanner = () => {
 }
 
 export default SurguluBanner;
+
 
 
 

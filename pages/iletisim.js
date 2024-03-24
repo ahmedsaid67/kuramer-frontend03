@@ -11,6 +11,7 @@ export default function Iletisim() {
       <div className={styles.page}>
             <Head>
                 <title>İletişim | Kuramer</title>
+                <link rel="icon" href="/kuramerlogo.png" />
             </Head>
 
             <section className={styles.contactInfo}>
@@ -35,13 +36,13 @@ export default function Iletisim() {
                     <a href="https://www.facebook.com/profile.php?id=100022853400645" target="_blank" rel="noopener noreferrer">
                         <img src="/icons/facebook.png" alt="Facebook" className={styles.icon} />
                     </a>
-                    <a href="https://twitter.com/kuramer_" target="_blank" rel="noopener noreferrer">
-                        <img src="/icons/twitter.png" alt="Twitter" className={styles.icon} />
+                    <a href="https://plus.google.com/u/0/+KuranAra%C5%9Ft%C4%B1rmalar%C4%B1MerkeziKURAMER" target="_blank">
+                      <img src="/icons/google-plus.png" alt="Google Plus Icon" className={styles.icon} />
                     </a>
                     <a href="https://www.linkedin.com/company/kuramer" target="_blank" rel="noopener noreferrer">
                         <img src="/icons/linkedin.png" alt="LinkedIn" className={styles.icon} />
                     </a>
-                    <a href="https://www.twitter.com/kuramer_org" target="_blank" rel="noopener noreferrer">
+                    <a href="https://twitter.com/kuramer_" target="_blank" rel="noopener noreferrer">
                         <img src="/icons/twitter.png" alt="Twitter" className={styles.icon} />
                     </a>
                     <a href="https://www.youtube.com/c/KuranAraştırmalarıMerkeziKURAMER/featured" target="_blank" rel="noopener noreferrer">

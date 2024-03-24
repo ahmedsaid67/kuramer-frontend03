@@ -8,7 +8,7 @@ const cardStyle = {
   marginBottom: 5,
   border: '1px solid #ccc',
   overflow: 'hidden', // Görsel dışına taşmaları önle
-  borderRadius: 0, // Köşelerin kavisini kaldır
+  borderRadius: 4, // Köşelerin kavisini kaldır
   display: 'flex',
   flexDirection: 'column',
   '@media (max-width: 768px)': {

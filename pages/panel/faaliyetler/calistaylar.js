@@ -11,7 +11,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import PdfViewer from '../../../compenent/PdfViewer';
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider, DatePicker,DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import trLocale from 'date-fns/locale/tr'; // Türkçe yerelleştirme için
 import { parseISO } from 'date-fns';
@@ -20,6 +20,7 @@ import Grid from '@mui/material/Grid';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { API_ROUTES } from '../../../utils/constants';
+import { formatISO } from 'date-fns';
 
 
 const StyledTableCell = styled(TableCell)({
@@ -77,6 +78,8 @@ export default function Sempozyumlar() {
     const [secilenAlbumId, setSecilenAlbumId] = useState(null);
     const [openDuzenlemeAlbumSecDialog, setDuzenlemeOpenAlbumSecDialog] = useState(false);
     const [ekleSecilenAlbumId, setEkleSecilenAlbumId] = useState(null);
+
+    const [isSaving, setIsSaving] = useState(false);
 
     
     const [showPdfViewer, setShowPdfViewer] = useState(false);
@@ -220,7 +223,6 @@ export default function Sempozyumlar() {
       const handleOpen = (item) => {
         setSelectedItem(item);
         setOpen(true);
-        console.log("item:",item)
       };
       const handleClose = () => {
         setOpen(false);
@@ -233,7 +235,6 @@ export default function Sempozyumlar() {
     
     
       const handleSave = (editedItem) => {
-        console.log("edititem:",editedItem)
   
         if (!editedItem.baslik || !editedItem.kapak_fotografi || !editedItem.pdf_dosya || !editedItem.tarih || !editedItem.konum ) {
           setUyariMesaji("Lütfen tüm alanları doldurunuz.");
@@ -269,7 +270,7 @@ export default function Sempozyumlar() {
   
         
         
-
+        setIsSaving(true);
         axios.put(API_ROUTES.CALISTAYLAR_DETAIL.replace("id",editedItem.id), formData)
           .then(response => {
             const updatedData = data.map(item => item.id === editedItem.id ? response.data : item);
@@ -280,6 +281,9 @@ export default function Sempozyumlar() {
           .catch(error => {
             console.error('Güncelleme sırasında hata oluştu:', error);
             setSaveError("Veri güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz.");  // Hata mesajını ayarla
+          })
+          .finally(() => {
+            setIsSaving(false); // İşlem tamamlandığında veya hata oluştuğunda
           });
       };
     
@@ -311,6 +315,7 @@ export default function Sempozyumlar() {
         }
         
 
+        setIsSaving(true);
         axios.post(API_ROUTES.CALISTAYLAR, formData)
           .then(response => {
             // Mevcut sayfayı yeniden yüklüyoru
@@ -328,8 +333,11 @@ export default function Sempozyumlar() {
           })
           .catch(error => {
             console.error('Yeni veri eklerken hata oluştu:', error);
-            setSaveError("Yeni veri eklerken hata oluştu. Lütfen tekrar deneyiniz."); 
-          });
+            setSaveError("Yeni veri eklemesi sırasında bir hata meydana geldi. Lütfen işleminizi tekrar gerçekleştirmeyi deneyiniz."); 
+          })
+          .finally(() => {
+            setIsSaving(false); // İşlem tamamlandığında veya hata oluştuğunda
+          })
       };
       
       
@@ -351,7 +359,6 @@ export default function Sempozyumlar() {
     };
     const handleDeleteSelected = () => {
       setDeleteError('');
-      console.log("deleted:", selectedRows);
       const selectedIds = Object.keys(selectedRows).filter(id => selectedRows[id]);
     
       axios.post(API_ROUTES.CALISTAYLAR_DELETE, { ids: selectedIds })
@@ -420,7 +427,6 @@ export default function Sempozyumlar() {
           // biz burada dosyayı evvele hemen backende atmadan ön yüzde göstermek istediğimizden
           // base64 e çeviririz.
           if (fieldName === "kapak_fotografi") {
-            console.log("photo:",file)
             const reader = new FileReader();
             reader.onload = (e) => {
               setSelectedItem((prevItem) => ({
@@ -460,7 +466,6 @@ export default function Sempozyumlar() {
       const handleFileChangeEkle = (event, fieldName) => {
         const file = event.target.files[0];
         if (fieldName === "kapakFotografi") {
-          console.log("photo:",file)
           const reader = new FileReader();
           reader.onload = (e) => {
             setNewItem((prevItem) => ({
@@ -516,7 +521,6 @@ export default function Sempozyumlar() {
     const handleYayinSec = () => {
       const secilenYayin = videoGaleri.find(yayin => yayin.id === secilenYayinId);
       setSelectedItem({ ...selectedItem, yayin: secilenYayin });
-      console.log("yayin:",secilenYayin)
       handleDuzenlemeCloseYayinSecDialog();
     };
 
@@ -561,7 +565,6 @@ export default function Sempozyumlar() {
       const handleAlbumSec = () => {
         const secilenAlbum = fotoGaleri.find(album => album.id === secilenAlbumId);
         setSelectedItem({ ...selectedItem, album: secilenAlbum });
-        console.log("yayin:",secilenAlbum)
         handleDuzenlemeCloseAlbumSecDialog();
       };
 
@@ -613,8 +616,12 @@ export default function Sempozyumlar() {
         fontWeight: 600,
         color: '#333',
         padding: '8px 0', // Üst ve alt padding
-        // Sağ taraftan da bir miktar boşluk ekleyebilirsiniz
-        width:"320px"
+        // Metin tek satırda gösterilecek ve taşma durumunda "..." ile kısaltılacak
+        whiteSpace: 'nowrap', // Metni tek satırda tutar
+        overflow: 'hidden', // Ekstra metni gizler
+        textOverflow: 'ellipsis', // Gizlenen metnin sonuna "..." ekler
+        width: '320px' // Varsayılan genişlik. Gerekirse ayarlayabilirsiniz
+        // Sağ taraftan da bir miktar boşluk eklemek isterseniz marginRight özelliğini kullanabilirsiniz.
       });
       
       const StyledCheckbox = styled(Checkbox)({
@@ -641,6 +648,13 @@ export default function Sempozyumlar() {
       function truncateText(text, maxLength) {
         return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
       }
+
+
+      const formatDateWithoutTimeZone = (dateString) => {
+        const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat('tr-TR', options).format(date);
+      };
       
 
 
@@ -701,7 +715,7 @@ export default function Sempozyumlar() {
                               <span>{truncateText(row.baslik, 10)}</span>
                             </Tooltip>
                           </TableCell>
-                          <TableCell style={{ fontSize: '0.75rem' }}>{row.tarih}</TableCell>
+                          <TableCell style={{ fontSize: '0.75rem' }}>{formatDateWithoutTimeZone(row.tarih)}</TableCell>
                           <TableCell style={{ fontSize: '0.75rem', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             <Tooltip title={row.konum} placement="top">
                               <span>{truncateText(row.konum, 10)}</span>
@@ -772,17 +786,25 @@ export default function Sempozyumlar() {
             />
 
               <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={trLocale}>
-                  <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-                      <DatePicker
-                          label="Tarih"
-                          value={selectedItem && selectedItem.tarih ? parseISO(selectedItem.tarih) : null}
-                          onChange={(newValue) => {
-                              const formattedDate = newValue ? format(newValue, "yyyy-MM-dd") : '';
-                              setSelectedItem({ ...selectedItem, tarih: formattedDate });
-                          }}
-                          format="dd.MM.yyyy"
-                      />
-                  </div>
+                <DateTimePicker
+                  label="Tarih ve Saat"
+                  value={selectedItem && selectedItem.tarih ? new Date(selectedItem.tarih) : null}
+                  onChange={(newValue) => {
+                    // Check if newValue is a valid date
+                    const isValidDate = newValue && !isNaN(new Date(newValue).getTime());
+                    const formattedDateTime = isValidDate ? newValue.toISOString() : '';
+                    setSelectedItem({ ...selectedItem, tarih: formattedDateTime });
+                  }}   
+                  inputFormat="dd MMMM yyyy HH:mm"
+                  slotProps={{
+                    textField: { // TextField için slotProps kullanılıyor
+                      variant: 'outlined', // TextField özelleştirmeleri
+                      fullWidth: true,
+                      margin: 'normal',
+                      // Diğer TextField propsları burada belirtilebilir
+                    },
+                  }}
+                />
               </LocalizationProvider>
 
 
@@ -1002,7 +1024,7 @@ export default function Sempozyumlar() {
 
           <DialogActions>
               <Button onClick={() => handleSave(selectedItem)} color="primary">
-                  Kaydet
+              {isSaving ? <CircularProgress size={24} /> : "Kaydet"}
               </Button>
           </DialogActions>
       </Dialog>
@@ -1118,17 +1140,24 @@ export default function Sempozyumlar() {
 
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={trLocale}>
             <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-                <DatePicker
-                    label="Tarih"
-                    value={newItem.tarih ? parseISO(newItem.tarih) : null}
+                <DateTimePicker
+                    label="Tarih ve Saat"
+                    value={newItem.tarih ? new Date(newItem.tarih) : null}
                     onChange={(newValue) => {
-                        const formattedDate = newValue ? format(newValue, "yyyy-MM-dd") : '';
-                        setNewItem({ ...newItem, tarih: formattedDate });
+                      // Check if newValue is a valid date
+                      const isValidDate = newValue && !isNaN(new Date(newValue).getTime());
+                      const formattedDateTime = isValidDate ? format(newValue, "yyyy-MM-dd'T'HH:mm:ss") : '';
+                      setNewItem({ ...newItem, tarih: formattedDateTime });
                     }}
-                    PopperProps={{
-                        component: CustomPopper
+                    slotProps={{
+                      textField: { // TextField için slotProps kullanılıyor
+                        variant: 'outlined', // TextField özelleştirmeleri
+                        fullWidth: true,
+                        margin: 'normal',
+                        // Diğer TextField propsları burada belirtilebilir
+                      },
                     }}
-                    format="dd MMMM yyyy" 
+                    inputFormat="dd MMMM yyyy HH:mm"
                 />
             </div>
         </LocalizationProvider>
@@ -1235,7 +1264,7 @@ export default function Sempozyumlar() {
                             {/* X simgesi */}
                             <IconButton
                                 style={{ fontSize: '20px', backgroundColor: 'transparent', color: 'red', position: 'absolute', top: 0, right: 0 }}
-                                onClick={() => handleRemoveImageEkle("pdf_dosya")}
+                                onClick={() => handleRemoveImageEkle("pdfDosya")}
                             >
                                 <CloseIcon />
                             </IconButton>
@@ -1351,7 +1380,7 @@ export default function Sempozyumlar() {
 
         <DialogActions>
           <Button onClick={handleAddNewItem} color="primary">
-            Ekle
+          {isSaving ? <CircularProgress size={24} /> : "Ekle"}
           </Button>
         </DialogActions>
       </Dialog>

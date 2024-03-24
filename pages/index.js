@@ -30,10 +30,6 @@ function Index() {
     <>
     <Head>
       <title>Ana Sayfa - Kuramer</title>
-      <meta name="description" content="Kuramer, dinî meseleler ve ilmî bakış açısı ile temel konu ve kavramlar üzerine derinlemesine çalışmalar sunar. Kitap serilerimiz, yayınlarımız ve KuramerTv içeriklerimizle bilgiye erişiminizi kolaylaştırıyoruz." />
-      <meta name="keywords" content="Kuramer, dini meseleler, ilmî bakış, kitap serileri, yayınlar, KuramerTv, temel konular, dini kavramlar" />
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="icon" href="/kuramerlogo.png" />
 
 

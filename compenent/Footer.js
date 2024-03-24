@@ -26,11 +26,11 @@ const Footer = () => {
           <h3>Hızlı Linkler</h3>
           <ul>
             <li><a href="/">Anasayfa</a></li>
-            <li><a href="#">Kitap Serileri</a></li>
-            <li><a href="#">Yayinlarimizdan Secmeler</a></li>
-            <li><a href="#">Temel Konu ve Kavramlar</a></li>
-            <li><a href="#">İletişim</a></li>
-            <li><a href="#">Hakkımızda</a></li>
+            <li><a href="/yayinlar/kitaplar">Kitap Serileri</a></li>
+            <li><a href="/yayinlarimizdan-secmeler">Yayinlarimizdan Secmeler</a></li>
+            <li><a href="/temel-konu-kavramlar">Temel Konu ve Kavramlar</a></li>
+            <li><a href="/iletisim">İletişim</a></li>
+            <li><a href="/kurumsal?tab=hakkimizda">Hakkımızda</a></li>
           </ul>
         </div>
 
@@ -44,8 +44,8 @@ const Footer = () => {
             <a href="https://plus.google.com/u/0/+KuranAra%C5%9Ft%C4%B1rmalar%C4%B1MerkeziKURAMER" target="_blank">
               <img src="/icons/google-plus.png" alt="Google Plus Icon" className={styles.icon} />
             </a>
-            <a href="#">
-              <img src="/icons/linkedin.png" alt="LinkedIn Icon" className={styles.icon} />
+            <a href="https://www.linkedin.com/company/kuramer" target="_blank" rel="noopener noreferrer">
+              <img src="/icons/linkedin.png" alt="LinkedIn" className={styles.icon} />
             </a>
             <a href="https://twitter.com/kuramer_" target="_blank">
               <img src="/icons/twitter.png" alt="Twitter Icon" className={styles.icon} />

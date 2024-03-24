@@ -6,6 +6,8 @@ import styles from '../styles/Sidebar.module.css';
 import { useSelector,useDispatch } from 'react-redux';
 import { submitLogout } from '../context/features/auth/loginSlice';
 import CircularProgress from '@mui/material/CircularProgress';
+import Head from 'next/head'
+
 
 const drawerWidth = 240;
 
@@ -206,7 +208,6 @@ function NestedList({ children }) {
 
 
   const logout=()=>{
-    console.log("logout")
     dispatch(submitLogout())
   }
 
@@ -390,6 +391,13 @@ function NestedList({ children }) {
   
 
   return (
+    <>
+    <Head>
+                <title>Panel | Kuramer</title>
+                <link rel="icon" href="/kuramerlogo.png" />
+    </Head>
+    
+    
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -448,6 +456,7 @@ function NestedList({ children }) {
       </div>
     </Box>
     </Box>
+    </>
   );
 }
 

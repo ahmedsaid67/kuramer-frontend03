@@ -3,6 +3,8 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
 }
 
 .bannerImage {
@@ -35,12 +37,11 @@
   border: 1px solid #ddd;
   padding: 10px;
   width: 300px;
+  
 }
 
 .albumImage {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
+  cursor: pointer;
 }
 
 .albumTitle {
@@ -49,6 +50,7 @@
   text-decoration: none;
   color: #333;
   display: block;
+  cursor: pointer;
 }
 
 .modalContent {
@@ -123,6 +125,122 @@
   opacity: 0.8; /* Adjust opacity and other styles as desired */
 }
 
+.noAlbumsMessage {
+  text-align: center; /* Metni ortalar */
+  margin-top: 100px; /* Üstten boşluk ekler */
+  margin-bottom: 100px;
+  font-size: 20px; /* Font boyutunu belirler */
+  color: #333; /* Metin rengini belirler */
+  font-weight: bold; /* Metni kalın yapar */
+}
+
+
+
+
+.otherAlbumsTitle {
+  text-align: center;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+  font-weight: bold;
+}
+
+
+.selectedAlbumCard {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Hafif bir gölge ekler */
+  padding-top: 25px;
+  padding-bottom: 25px;
+
+  
+}
+
+.noImagesMessage {
+  position: sticky; /* Sabit konumlandırma */
+  bottom: 0; /* Sayfanın altına yapışık */
+  background-color: #2e5077; /* Arka plan rengi */
+  color: white; /* Yazı rengi */
+  padding: 10px; /* İç boşluk */
+  text-align: center; /* Metni ortala */
+  border-top: 2px solid #2e5077; /* Üst kenarlık */
+  z-index: 1000; /* Diğer içeriklerin üzerinde görünmesini sağlar */
+}
+
+.noAlbums {
+  position: sticky; /* Sabit konumlandırma */
+  bottom: 0; /* Sayfanın altına yapışık */
+  background-color: #FFBABA; /* Arka plan rengi */
+  color: #D8000C; /* Yazı rengi */
+  padding: 10px; /* İç boşluk */
+  text-align: center; /* Metni ortala */
+  border-top: 2px solid #FFBABA; /* Üst kenarlık */
+  z-index: 1000; /* Diğer içeriklerin üzerinde görünmesini sağlar */
+}
+
+.closeButton {
+  background-color: transparent;
+  color: white;
+  border: none;
+  cursor: pointer;
+  float: right; /* Sağa hizalama */
+  font-size: 20px; /* İkon boyutu */
+}
+
+
+.loader {
+  display: flex;
+  justify-content: center; /* Loader'ı yatay olarak ortala */
+  align-items: center; /* Loader'ı dikey olarak ortala */
+  height: 50vh; /* Loader'ın yüksekliğini viewport yüksekliğine eşitle */
+}
+
+.errorMessage {
+  color: #D8000C; /* Hata metninin rengi, daha yumuşak bir kırmızı tonu */
+  font-size: 18px; /* Metin boyutu */
+  text-align: center; /* Metni ortala */
+  padding: 20px; /* İç boşluk */
+  border: 1px solid #FFBABA; /* Daha yumuşak bir kırmızı çerçeve */
+  border-radius: 8px; /* Köşeleri daha fazla yuvarlat */
+  margin: 60px auto; /* Üst ve alttan 20px boşluk, sağ ve solda otomatik merkezleme */
+  background-color: #FFD2D2; /* Daha açık bir arka plan rengi, hata mesajını yumuşatır */
+  max-width: 80%; /* Maksimum genişlik */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hafif bir gölge ekleyerek derinlik hissi verir */
+  transition: all 0.3s ease; /* Pürüzsüz bir geçiş efekti ekler */
+}
+
+.errorMessage:hover {
+  transform: translateY(-2px); /* Fare ile üzerine gelindiğinde yukarı doğru hafif bir hareket */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Gölgeyi artırır ve daha belirgin hale getirir */
+}
+
+
+.noDataMessage {
+  text-align: center; /* Metni ortalar */
+  padding: 20px; /* Çevresine dolgu ekler */
+  font-size: 18px; /* Metin boyutunu ayarlar */
+  background-color: #2e5077; /* Arka plan rengi */
+  color: white;
+  border-radius: 8px; /* Kenar yuvarlaklığını ayarlar */
+  margin: 60px auto; /* Üst ve alttan boşluk bırakır ve yatayda ortalar */
+  max-width: 80%; /* Maksimum genişliği sınırlar */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Kutu gölgesi ekler */
+  border: 1px solid #1e3c5a; /* Kenarlık ekler */
+  transition: all 0.3s ease; /* Geçiş efekti ekler */
+}
+
+.noDataMessage:hover {
+  transform: scale(1.02); /* Fare ile üzerine gelindiğinde büyütme efekti */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Gölgeyi artırır */
+}
+
+.paginationContainer {
+  margin-top: 40px;
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
 
 @media screen and (max-width: 1100px) {
@@ -136,6 +254,10 @@
 
   .titleContainer h1 {
     font-size: 2.5rem;
+  }
+
+  .selectedAlbumCard {
+    margin-bottom: 30px; /* Mobil görünüm için alt boşluk */
   }
 }
 

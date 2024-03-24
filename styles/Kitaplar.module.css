@@ -70,6 +70,71 @@
   padding: 20px;
 }
 
+.errorMessage {
+  color: #D8000C; /* Hata metninin rengi, daha yumuşak bir kırmızı tonu */
+  font-size: 18px; /* Metin boyutu */
+  text-align: center; /* Metni ortala */
+  padding: 20px; /* İç boşluk */
+  border: 1px solid #FFBABA; /* Daha yumuşak bir kırmızı çerçeve */
+  border-radius: 8px; /* Köşeleri daha fazla yuvarlat */
+  margin: 60px auto; /* Üst ve alttan 20px boşluk, sağ ve solda otomatik merkezleme */
+  background-color: #FFD2D2; /* Daha açık bir arka plan rengi, hata mesajını yumuşatır */
+  max-width: 80%; /* Maksimum genişlik */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hafif bir gölge ekleyerek derinlik hissi verir */
+  transition: all 0.3s ease; /* Pürüzsüz bir geçiş efekti ekler */
+}
+
+.errorMessage:hover {
+  transform: translateY(-2px); /* Fare ile üzerine gelindiğinde yukarı doğru hafif bir hareket */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Gölgeyi artırır ve daha belirgin hale getirir */
+}
+
+.infoMessage {
+  color: white; /* Kırmızı metin rengi */
+  font-size: 18px; /* Metin boyutu */
+  text-align: center; /* Metni ortala */
+  padding: 20px; /* İç boşluk */
+  border: 1px solid #2e5077; /* Kırmızı çerçeve */
+  border-radius: 5px; /* Köşeleri yuvarlat */
+  margin: 20px auto; /* Üst ve alttan 20px boşluk, sağ ve solda otomatik merkezleme */
+  background-color: #2e5077;/* Arka plan rengi */
+  max-width: 600px; /* Maksimum genişlik */
+}
+
+.paginationContainer {
+  margin-top: 40px;
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader {
+  display: flex;
+  justify-content: center; /* Loader'ı yatay olarak ortala */
+  align-items: center; /* Loader'ı dikey olarak ortala */
+  height: 50vh; /* Loader'ın yüksekliğini viewport yüksekliğine eşitle */
+}
+
+.noDataMessage {
+  text-align: center; /* Metni ortalar */
+  padding: 20px; /* Çevresine dolgu ekler */
+  font-size: 18px; /* Metin boyutunu ayarlar */
+  background-color: #2e5077; /* Arka plan rengi */
+  color: white;
+  border-radius: 8px; /* Kenar yuvarlaklığını ayarlar */
+  margin: 60px auto; /* Üst ve alttan boşluk bırakır ve yatayda ortalar */
+  max-width: 80%; /* Maksimum genişliği sınırlar */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Kutu gölgesi ekler */
+  border: 1px solid #1e3c5a; /* Kenarlık ekler */
+  transition: all 0.3s ease; /* Geçiş efekti ekler */
+}
+
+.noDataMessage:hover {
+  transform: scale(1.02); /* Fare ile üzerine gelindiğinde büyütme efekti */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Gölgeyi artırır */
+}
+
 /* Medya Sorguları */
 @media screen and (max-width: 1100px) {
   .bannerImage {
@@ -134,6 +199,15 @@
     font-size: 20px;
   }
 
+  .errorMessage {
+
+    max-width: 200px; /* Maksimum genişlik */
+  }
+
+  .infoMessage {
+
+    max-width: 200px; /* Maksimum genişlik */
+  }
   
 
 }

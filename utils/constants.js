@@ -30,13 +30,13 @@ export const API_ROUTES = {
 
     // YAYINLAR
     BROSURLER: API_SERVER_URL + "/brosurler/",
-    BROSURLER_ACTIVE : API_SERVER_URL + "/brosurler/get_active/",
+    BROSURLER_ACTIVE : API_SERVER_URL + "/brosurler/get_active/?page=currentPage",
     BROSURLER_PAGINATIONS : API_SERVER_URL + "/brosurler/?page=currentPage",
     BROSURLER_DETAIL : API_SERVER_URL + "/brosurler/id/",
     BROSURLER_DELETE : API_SERVER_URL + "/brosurler/bulk_soft_delete/",
 
     BULTENLER: API_SERVER_URL + "/bultenler/",
-    BULTENLER_ACTIVE : API_SERVER_URL + "/bultenler/get_active/",
+    BULTENLER_ACTIVE : API_SERVER_URL + "/bultenler/get_active/?page=currentPage",
     BULTENLER_LIST : API_SERVER_URL + "/bultenler-list/",
     BULTENLER_PAGINATIONS : API_SERVER_URL + "/bultenler/?page=currentPage",
     BULTENLER_DETAIL : API_SERVER_URL + "/bultenler/id/",
@@ -70,13 +70,13 @@ export const API_ROUTES = {
     // TEMEL KONU VE KAVRAMLAR
     
     TEMEL_KAVRAMLAR: API_SERVER_URL + "/temelkavramlar/",
-    TEMEL_KAVRAMLAR_ACTIVE : API_SERVER_URL + "/temelkavramlar/get_active/",
+    TEMEL_KAVRAMLAR_ACTIVE : API_SERVER_URL + "/temelkavramlar/get_active/?page=currentPage",
     TEMEL_KAVRAMLAR_PAGINATIONS : API_SERVER_URL + "/temelkavramlar/?page=currentPage",
     TEMEL_KAVRAMLAR_DETAIL : API_SERVER_URL + "/temelkavramlar/id/",
     TEMEL_KAVRAMLAR_DELETE : API_SERVER_URL + "/temelkavramlar/bulk_soft_delete/",
 
     TEMEL_KONULAR: API_SERVER_URL + "/temelkonular/",
-    TEMEL_KONULAR_ACTIVE : API_SERVER_URL + "/temelkonular/get_active/",
+    TEMEL_KONULAR_ACTIVE : API_SERVER_URL + "/temelkonular/get_active/?page=currentPage",
     TEMEL_KONULAR_PAGINATIONS : API_SERVER_URL + "/temelkonular/?page=currentPage",
     TEMEL_KONULAR_DETAIL : API_SERVER_URL + "/temelkonular/id/",
     TEMEL_KONULAR_DELETE : API_SERVER_URL + "/temelkonular/bulk_soft_delete/",
@@ -84,7 +84,7 @@ export const API_ROUTES = {
     // YAYINLARIMIZDAN SEÇMELER
 
     YAYINLARIMIZDAN_SECMELER: API_SERVER_URL + "/yayinlarimizdansecmeler/",
-    YAYINLARIMIZDAN_SECMELER_ACTIVE : API_SERVER_URL + "/yayinlarimizdansecmeler/get_active/",
+    YAYINLARIMIZDAN_SECMELER_ACTIVE : API_SERVER_URL + "/yayinlarimizdansecmeler/get_active/?page=currentPage",
     YAYINLARIMIZDAN_SECMELER_PAGINATIONS : API_SERVER_URL + "/yayinlarimizdansecmeler/?page=currentPage",
     YAYINLARIMIZDAN_SECMELER_DETAIL : API_SERVER_URL + "/yayinlarimizdansecmeler/id/",
     YAYINLARIMIZDAN_SECMELER_DELETE : API_SERVER_URL + "/yayinlarimizdansecmeler/bulk_soft_delete/",
@@ -92,13 +92,13 @@ export const API_ROUTES = {
     // MEDYA GALERİ
 
     YAZILI_BASIN: API_SERVER_URL + "/yazilibasin/",
-    YAZILI_BASIN_ACTIVE : API_SERVER_URL + "/yazilibasin/get_active/",
+    YAZILI_BASIN_ACTIVE : API_SERVER_URL + "/yazilibasin/get_active/?page=currentPage",
     YAZILI_BASIN_PAGINATIONS : API_SERVER_URL + "/yazilibasin/?page=currentPage",
     YAZILI_BASIN_DETAIL : API_SERVER_URL + "/yazilibasin/id/",
     YAZILI_BASIN_DELETE : API_SERVER_URL + "/yazilibasin/bulk_soft_delete/",
 
     GORSEL_BASIN: API_SERVER_URL + "/gorselbasin/",
-    GORSEL_BASIN_ACTIVE : API_SERVER_URL + "/gorselbasin/get_active/",
+    GORSEL_BASIN_ACTIVE : API_SERVER_URL + "/gorselbasin/get_active/?page=currentPage",
     GORSEL_BASIN_PAGINATIONS : API_SERVER_URL + "/gorselbasin/?page=currentPage",
     GORSEL_BASIN_DETAIL : API_SERVER_URL + "/gorselbasin/id/",
     GORSEL_BASIN_DELETE : API_SERVER_URL + "/gorselbasin/bulk_soft_delete/", 
@@ -146,7 +146,7 @@ export const API_ROUTES = {
     // KAMUOYU DUYURULARI
 
     KAMUOYU_DUYURULARI: API_SERVER_URL + "/kamuoyuduyurulari/",
-    KAMUOYU_DUYURULARI_ACTIVE : API_SERVER_URL + "/kamuoyuduyurulari/get_active/",
+    KAMUOYU_DUYURULARI_ACTIVE : API_SERVER_URL + "/kamuoyuduyurulari/get_active/?page=currentPage",
     KAMUOYU_DUYURULARI_PAGINATIONS : API_SERVER_URL + "/kamuoyuduyurulari/?page=currentPage",
     KAMUOYU_DUYURULARI_DETAIL : API_SERVER_URL + "/kamuoyuduyurulari/slug/",
     KAMUOYU_DUYURULARI_DELETE : API_SERVER_URL + "/kamuoyuduyurulari/bulk_soft_delete/",
@@ -154,7 +154,7 @@ export const API_ROUTES = {
     // MUSHAFLAR
 
     MUSHAF_FARKLARI: API_SERVER_URL + "/mushaffarklari/",
-    MUSHAF_FARKLARI_ACTIVE : API_SERVER_URL + "/mushaffarklari/get_active/",
+    MUSHAF_FARKLARI_ACTIVE : API_SERVER_URL + "/mushaffarklari/get_active/?page=currentPage",
     MUSHAF_FARKLARI_PAGINATIONS : API_SERVER_URL + "/mushaffarklari/?page=currentPage",
     MUSHAF_FARKLARI_DETAIL : API_SERVER_URL + "/mushaffarklari/id/",
     MUSHAF_FARKLARI_DELETE : API_SERVER_URL + "/mushaffarklari/bulk_soft_delete/",
@@ -178,31 +178,31 @@ export const API_ROUTES = {
     // FAALİYETLER
     
     SEMPOZYUMLAR: API_SERVER_URL + "/sempozyumlar/",
-    SEMPOZYUMLAR_ACTIVE : API_SERVER_URL + "/sempozyumlar/get_active/",
+    SEMPOZYUMLAR_ACTIVE : API_SERVER_URL + "/sempozyumlar/get_active/?page=currentPage",
     SEMPOZYUMLAR_PAGINATIONS : API_SERVER_URL + "/sempozyumlar/?page=currentPage",
     SEMPOZYUMLAR_DETAIL : API_SERVER_URL + "/sempozyumlar/id/",
     SEMPOZYUMLAR_DELETE : API_SERVER_URL + "/sempozyumlar/bulk_soft_delete/",
 
     KONFERANSLAR: API_SERVER_URL + "/konferanslar/",
-    KONFERANSLAR_ACTIVE : API_SERVER_URL + "/konferanslar/get_active/",
+    KONFERANSLAR_ACTIVE : API_SERVER_URL + "/konferanslar/get_active/?page=currentPage",
     KONFERANSLAR_PAGINATIONS : API_SERVER_URL + "/konferanslar/?page=currentPage",
     KONFERANSLAR_DETAIL : API_SERVER_URL + "/konferanslar/id/",
     KONFERANSLAR_DELETE : API_SERVER_URL + "/konferanslar/bulk_soft_delete/",
     
     EGITIMLER: API_SERVER_URL + "/egitimler/",
-    EGITIMLER_ACTIVE : API_SERVER_URL + "/egitimler/get_active/",
+    EGITIMLER_ACTIVE : API_SERVER_URL + "/egitimler/get_active/?page=currentPage",
     EGITIMLER_PAGINATIONS : API_SERVER_URL + "/egitimler/?page=currentPage",
     EGITIMLER_DETAIL : API_SERVER_URL + "/egitimler/slug/",
     EGITIMLER_DELETE : API_SERVER_URL + "/egitimler/bulk_soft_delete/",
 
     CALISTAYLAR: API_SERVER_URL + "/calistaylar/",
-    CALISTAYLAR_ACTIVE : API_SERVER_URL + "/calistaylar/get_active/",
+    CALISTAYLAR_ACTIVE : API_SERVER_URL + "/calistaylar/get_active/?page=currentPage",
     CALISTAYLAR_PAGINATIONS : API_SERVER_URL + "/calistaylar/?page=currentPage",
     CALISTAYLAR_DETAIL : API_SERVER_URL + "/calistaylar/id/",
     CALISTAYLAR_DELETE : API_SERVER_URL + "/calistaylar/bulk_soft_delete/",
 
     ARASTIRMALAR: API_SERVER_URL + "/arastirmalar/",
-    ARASTIRMALAR_ACTIVE : API_SERVER_URL + "/arastirmalar/get_active/",
+    ARASTIRMALAR_ACTIVE : API_SERVER_URL + "/arastirmalar/get_active/?page=currentPage",
     ARASTIRMALAR_PAGINATIONS : API_SERVER_URL + "/arastirmalar/?page=currentPage",
     ARASTIRMALAR_DETAIL : API_SERVER_URL + "/arastirmalar/slug/",
     ARASTIRMALAR_DELETE : API_SERVER_URL + "/arastirmalar/bulk_soft_delete/",

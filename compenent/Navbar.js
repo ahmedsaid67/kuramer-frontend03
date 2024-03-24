@@ -42,7 +42,6 @@ const Navbar = () => {
   const handleSubMenuExpand = (itemId) => {
     if (menuItems.some(item => item.parent === itemId)) {
       setActiveSubMenu(activeSubMenu === itemId ? null : itemId);
-      console.log("item:",itemId)
     }
   };
 

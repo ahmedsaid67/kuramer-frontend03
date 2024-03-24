@@ -13,7 +13,7 @@ const Musaf = () => {
                     <p className={styles.metin}>
                         Kur'an'ın bilinen en eski nüshalarını keşfedin ve kıraat farklılıklarının zengin tarihine derinlemesine bir bakış atın.
                     </p>
-                    <Link href="/TemelKonuKavram">
+                    <Link href="/kuran-i-kerim">
                       <button className={styles.customButton}>Daha fazlası için tıklayınız</button>
                     </Link>
                 </div>
@@ -28,7 +28,3 @@ const Musaf = () => {
 
 export default Musaf;
 
-
-//<Link href="/musaflar">
-//                      <button className={styles.customButton}>Daha fazlası için tıklayınız</button>
-//                    </Link>

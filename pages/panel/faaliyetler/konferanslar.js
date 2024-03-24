@@ -9,7 +9,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider, DatePicker, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import trLocale from 'date-fns/locale/tr'; // Türkçe yerelleştirme için
 import { parseISO } from 'date-fns';
@@ -18,6 +18,7 @@ import Grid from '@mui/material/Grid';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { API_ROUTES } from '../../../utils/constants';
+import { formatISO } from 'date-fns';
 
 const StyledTableCell = styled(TableCell)({
     fontWeight: 'bold',
@@ -44,6 +45,7 @@ export default function Konferanslar() {
     const [newItem, setNewItem] = useState({
       baslik: '',
       tarih:"",
+      konum:"",
       konusmaci:"",
       kapakFotografi: null,
       yayin: null,
@@ -68,6 +70,7 @@ export default function Konferanslar() {
     const [ekleSecilenYayinId, setEkleSecilenYayinId] = useState(null);
 
     const [openAlbumSecDialog,setOpenAlbumSecDialog] = useState(false)
+    const [isSaving, setIsSaving] = useState(false);
 
 
     const [secilenAlbumId, setSecilenAlbumId] = useState(null);
@@ -183,6 +186,7 @@ export default function Konferanslar() {
         setNewItem({
             baslik: '',
             tarih:"",
+            konum:"",
             konusmaci:"",
             kapakFotografi: null,
             yayin:null,
@@ -198,7 +202,6 @@ export default function Konferanslar() {
       const handleOpen = (item) => {
         setSelectedItem(item);
         setOpen(true);
-        console.log("item:",item)
       };
       const handleClose = () => {
         setOpen(false);
@@ -211,7 +214,6 @@ export default function Konferanslar() {
     
     
       const handleSave = (editedItem) => {
-        console.log("edititem:",editedItem)
   
         if (!editedItem.baslik || !editedItem.kapak_fotografi || !editedItem.tarih || !editedItem.konusmaci ) {
           setUyariMesaji("Lütfen tüm alanları doldurunuz.");
@@ -232,6 +234,9 @@ export default function Konferanslar() {
         formData.append("tarih", editedItem["tarih"]);
         formData.append("konusmaci", editedItem["konusmaci"]);
 
+        
+        formData.append("konum", editedItem["konum"]);
+
         if (editedItem.yayin){
           formData.append("yayin_id", editedItem.yayin.id);
         }
@@ -244,7 +249,7 @@ export default function Konferanslar() {
   
         
         
-
+        setIsSaving(true);
         axios.put(API_ROUTES.KONFERANSLAR_DETAIL.replace("id",editedItem.id), formData)
           .then(response => {
             const updatedData = data.map(item => item.id === editedItem.id ? response.data : item);
@@ -255,6 +260,9 @@ export default function Konferanslar() {
           .catch(error => {
             console.error('Güncelleme sırasında hata oluştu:', error);
             setSaveError("Veri güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz.");  // Hata mesajını ayarla
+          })
+          .finally(() => {
+            setIsSaving(false); // İşlem tamamlandığında veya hata oluştuğunda
           });
       };
     
@@ -263,7 +271,7 @@ export default function Konferanslar() {
     
       const handleAddNewItem = () => {
 
-        if (!newItem.baslik || !newItem.kapakFotografi || !newItem.tarih || !newItem.konusmaci) {
+        if (!newItem.baslik || !newItem.kapakFotografi || !newItem.tarih || !newItem.konusmaci  ) {
 
           setUyariMesajiEkle("Lütfen tüm alanları doldurunuz.");
           return;
@@ -275,6 +283,10 @@ export default function Konferanslar() {
         formData.append("durum", newItem["durum"]);
         formData.append("baslik", newItem["baslik"]);
         formData.append("tarih", newItem["tarih"]);
+   
+        formData.append("konum", newItem["konum"]);
+        
+        
         formData.append("konusmaci", newItem["konusmaci"]);
         if (newItem.yayin){
           formData.append("yayin_id", newItem.yayin.id);
@@ -284,7 +296,7 @@ export default function Konferanslar() {
           formData.append("album_id", newItem.album.id);
         }
         
-
+        setIsSaving(true);
         axios.post(API_ROUTES.KONFERANSLAR, formData)
           .then(response => {
             // Mevcut sayfayı yeniden yüklüyoru
@@ -302,8 +314,11 @@ export default function Konferanslar() {
           })
           .catch(error => {
             console.error('Yeni veri eklerken hata oluştu:', error);
-            setSaveError("Yeni veri eklerken hata oluştu. Lütfen tekrar deneyiniz."); 
-          });
+            setSaveError("Yeni veri eklemesi sırasında bir hata meydana geldi. Lütfen işleminizi tekrar gerçekleştirmeyi deneyiniz."); 
+          })
+          .finally(() => {
+            setIsSaving(false); // İşlem tamamlandığında veya hata oluştuğunda
+          })
       };
       
       
@@ -325,7 +340,6 @@ export default function Konferanslar() {
     };
     const handleDeleteSelected = () => {
       setDeleteError('');
-      console.log("deleted:", selectedRows);
       const selectedIds = Object.keys(selectedRows).filter(id => selectedRows[id]);
     
       axios.post(API_ROUTES.KONFERANSLAR_DELETE, { ids: selectedIds })
@@ -394,7 +408,6 @@ export default function Konferanslar() {
           // biz burada dosyayı evvele hemen backende atmadan ön yüzde göstermek istediğimizden
           // base64 e çeviririz.
           if (fieldName === "kapak_fotografi") {
-            console.log("photo:",file)
             const reader = new FileReader();
             reader.onload = (e) => {
               setSelectedItem((prevItem) => ({
@@ -423,7 +436,6 @@ export default function Konferanslar() {
       const handleFileChangeEkle = (event, fieldName) => {
         const file = event.target.files[0];
         if (fieldName === "kapakFotografi") {
-          console.log("photo:",file)
           const reader = new FileReader();
           reader.onload = (e) => {
             setNewItem((prevItem) => ({
@@ -466,7 +478,6 @@ export default function Konferanslar() {
     const handleYayinSec = () => {
       const secilenYayin = videoGaleri.find(yayin => yayin.id === secilenYayinId);
       setSelectedItem({ ...selectedItem, yayin: secilenYayin });
-      console.log("yayin:",secilenYayin)
       handleDuzenlemeCloseYayinSecDialog();
     };
 
@@ -511,7 +522,6 @@ export default function Konferanslar() {
       const handleAlbumSec = () => {
         const secilenAlbum = fotoGaleri.find(album => album.id === secilenAlbumId);
         setSelectedItem({ ...selectedItem, album: secilenAlbum });
-        console.log("yayin:",secilenAlbum)
         handleDuzenlemeCloseAlbumSecDialog();
       };
 
@@ -563,8 +573,12 @@ export default function Konferanslar() {
         fontWeight: 600,
         color: '#333',
         padding: '8px 0', // Üst ve alt padding
-        // Sağ taraftan da bir miktar boşluk ekleyebilirsiniz
-        width:"320px"
+        // Metin tek satırda gösterilecek ve taşma durumunda "..." ile kısaltılacak
+        whiteSpace: 'nowrap', // Metni tek satırda tutar
+        overflow: 'hidden', // Ekstra metni gizler
+        textOverflow: 'ellipsis', // Gizlenen metnin sonuna "..." ekler
+        width: '320px' // Varsayılan genişlik. Gerekirse ayarlayabilirsiniz
+        // Sağ taraftan da bir miktar boşluk eklemek isterseniz marginRight özelliğini kullanabilirsiniz.
       });
       
       const StyledCheckbox = styled(Checkbox)({
@@ -591,6 +605,13 @@ export default function Konferanslar() {
       function truncateText(text, maxLength) {
         return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
       }
+
+
+      const formatDateWithoutTimeZone = (dateString) => {
+        const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat('tr-TR', options).format(date);
+      };
       
 
 
@@ -627,9 +648,9 @@ export default function Konferanslar() {
                         </TableCell>
                         <TableCell style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Başlık</TableCell>
                         <TableCell style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#fff' }}>Tarih</TableCell>
+                        <TableCell style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#fff' }}>Konum</TableCell>
                         <TableCell style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#fff' }}>Konuşmacı</TableCell>
                         <TableCell style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#fff' }}>Kapak Fotoğrafı</TableCell>
-                        <TableCell style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#fff' }}>PDF Dosya</TableCell>
                         <TableCell style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#fff' }}>Yayın</TableCell>
                         <TableCell style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#fff' }}>Albüm</TableCell>
                         <TableCell style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#fff' }}>Durum</TableCell>
@@ -651,14 +672,21 @@ export default function Konferanslar() {
                               <span>{truncateText(row.baslik, 10)}</span>
                             </Tooltip>
                           </TableCell>
-                          <TableCell style={{ fontSize: '0.75rem' }}>{row.tarih}</TableCell>
+                          <TableCell style={{ fontSize: '0.75rem' }}>{formatDateWithoutTimeZone(row.tarih)}</TableCell>
+                          {row.konum ?
+                              <TableCell style={{ fontSize: '0.75rem', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                <Tooltip title={row.konum} placement="top">
+                                  <span>{truncateText(row.konum, 10)}</span>
+                                </Tooltip>
+                              </TableCell>:
+                              <TableCell style={{ fontSize: '0.75rem' }}>Mevcut Değil</TableCell>
+                          } 
                           <TableCell style={{ fontSize: '0.75rem', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             <Tooltip title={row.konusmaci} placement="top">
-                              <span>{truncateText(row.konusmaci, 15)}</span>
+                              <span>{truncateText(row.konusmaci, 10)}</span>
                             </Tooltip>
                           </TableCell>
                           <TableCell style={{ fontSize: '0.75rem' }}>{row.kapak_fotografi ? 'Mevcut' : 'Mevcut Değil'}</TableCell>
-                          <TableCell style={{ fontSize: '0.75rem' }}>{row.pdf_dosya ? 'Mevcut' : 'Mevcut Değil'}</TableCell>
                           <TableCell style={{ fontSize: '0.75rem' }}>{row.yayin ? 'Mevcut' : 'Mevcut Değil'}</TableCell>
                           <TableCell style={{ fontSize: '0.75rem' }}>{row.album ? 'Mevcut' : 'Mevcut Değil'}</TableCell>
                           <TableCell style={{ fontSize: '0.75rem' }}>{row.durum ? 'Aktif' : 'Pasif'}</TableCell>
@@ -722,18 +750,34 @@ export default function Konferanslar() {
             />
 
               <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={trLocale}>
-                  <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-                      <DatePicker
-                          label="Tarih"
-                          value={selectedItem && selectedItem.tarih ? parseISO(selectedItem.tarih) : null}
-                          onChange={(newValue) => {
-                              const formattedDate = newValue ? format(newValue, "yyyy-MM-dd") : '';
-                              setSelectedItem({ ...selectedItem, tarih: formattedDate });
-                          }}
-                          format="dd.MM.yyyy"
-                      />
-                  </div>
+                <DateTimePicker
+                  label="Tarih ve Saat"
+                  value={selectedItem && selectedItem.tarih ? new Date(selectedItem.tarih) : null}
+                  onChange={(newValue) => {
+                    // Check if newValue is a valid date
+                    const isValidDate = newValue && !isNaN(new Date(newValue).getTime());
+                    const formattedDateTime = isValidDate ? newValue.toISOString() : '';
+                    setSelectedItem({ ...selectedItem, tarih: formattedDateTime });
+                  }} 
+                  inputFormat="dd MMMM yyyy HH:mm"
+                  slotProps={{
+                    textField: { // TextField için slotProps kullanılıyor
+                      variant: 'outlined', // TextField özelleştirmeleri
+                      fullWidth: true,
+                      margin: 'normal',
+                      // Diğer TextField propsları burada belirtilebilir
+                    },
+                  }}
+                />
               </LocalizationProvider>
+
+              <TextField
+                label="Konum (Opsiyonel)"
+                value={selectedItem ? selectedItem.konum : ''}
+                onChange={(e) => setSelectedItem({ ...selectedItem, konum: e.target.value })}
+                fullWidth
+                margin="normal"
+            />
 
             
 
@@ -897,7 +941,7 @@ export default function Konferanslar() {
 
           <DialogActions>
               <Button onClick={() => handleSave(selectedItem)} color="primary">
-                  Kaydet
+              {isSaving ? <CircularProgress size={24} /> : "Kaydet"}
               </Button>
           </DialogActions>
       </Dialog>
@@ -1013,20 +1057,35 @@ export default function Konferanslar() {
 
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={trLocale}>
             <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-                <DatePicker
-                    label="Tarih"
-                    value={newItem.tarih ? parseISO(newItem.tarih) : null}
+                <DateTimePicker
+                    label="Tarih ve Saat"
+                    value={newItem.tarih ? new Date(newItem.tarih) : null}
                     onChange={(newValue) => {
-                        const formattedDate = newValue ? format(newValue, "yyyy-MM-dd") : '';
-                        setNewItem({ ...newItem, tarih: formattedDate });
+                      // Check if newValue is a valid date
+                      const isValidDate = newValue && !isNaN(new Date(newValue).getTime());
+                      const formattedDateTime = isValidDate ? format(newValue, "yyyy-MM-dd'T'HH:mm:ss") : '';
+                      setNewItem({ ...newItem, tarih: formattedDateTime });
                     }}
-                    PopperProps={{
-                        component: CustomPopper
+                    slotProps={{
+                      textField: { // TextField için slotProps kullanılıyor
+                        variant: 'outlined', // TextField özelleştirmeleri
+                        fullWidth: true,
+                        margin: 'normal',
+                        // Diğer TextField propsları burada belirtilebilir
+                      },
                     }}
-                    format="dd MMMM yyyy" 
+                    inputFormat="dd MMMM yyyy HH:mm"
                 />
             </div>
         </LocalizationProvider>
+
+        <TextField
+          label="Konum (Opsiyonel)"
+          value={newItem.konum}
+          onChange={(e) => setNewItem({ ...newItem, konum: e.target.value })}
+          fullWidth
+          margin="normal"
+        />
 
 
         <TextField
@@ -1185,7 +1244,7 @@ export default function Konferanslar() {
 
         <DialogActions>
           <Button onClick={handleAddNewItem} color="primary">
-            Ekle
+          {isSaving ? <CircularProgress size={24} /> : "Ekle"}
           </Button>
         </DialogActions>
       </Dialog>

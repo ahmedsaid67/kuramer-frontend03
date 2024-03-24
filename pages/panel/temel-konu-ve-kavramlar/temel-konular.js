@@ -46,6 +46,7 @@ export default function TemelKonular() {
     const [deleteError, setDeleteError] = useState('');
     const [uyariMesaji, setUyariMesaji] = useState("");
     const [uyariMesajiEkle, setUyariMesajiEkle] = useState("");
+    const [isSaving, setIsSaving] = useState(false);
 
     
     const [showPdfViewer, setShowPdfViewer] = useState(false);
@@ -128,7 +129,6 @@ export default function TemelKonular() {
     
     
       const handleSave = (editedItem) => {
-        console.log("editedItem:",editedItem)
   
         if (!editedItem.baslik || !editedItem.kapak_fotografi || !editedItem.pdf_dosya) {
           setUyariMesaji("Lütfen tüm alanları doldurunuz.");
@@ -153,7 +153,7 @@ export default function TemelKonular() {
         // PDF dosyası
         
         
-
+        setIsSaving(true);
         axios.put(API_ROUTES.TEMEL_KONULAR_DETAIL.replace("id",editedItem.id), formData)
           .then(response => {
             const updatedData = data.map(item => item.id === editedItem.id ? response.data : item);
@@ -164,6 +164,9 @@ export default function TemelKonular() {
           .catch(error => {
             console.error('Güncelleme sırasında hata oluştu:', error);
             setSaveError("Veri güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz.");  // Hata mesajını ayarla
+          })
+          .finally(() => {
+            setIsSaving(false); // İşlem tamamlandığında veya hata oluştuğunda
           });
       };
     
@@ -184,6 +187,7 @@ export default function TemelKonular() {
         formData.append("baslik", newItem["baslik"]);
         formData.append("pdf_dosya", newItem["pdfDosya"]);
 
+        setIsSaving(true); 
         axios.post(API_ROUTES.TEMEL_KONULAR, formData)
           .then(response => {
             // Mevcut sayfayı yeniden yüklüyoru
@@ -202,7 +206,10 @@ export default function TemelKonular() {
           .catch(error => {
             console.error('Yeni veri eklerken hata oluştu:', error);
             setSaveError("Veri güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz."); 
-          });
+          })
+          .finally(() => {
+            setIsSaving(false); // İşlem tamamlandığında veya hata oluştuğunda
+          })
       };
       
       
@@ -224,7 +231,6 @@ export default function TemelKonular() {
     };
     const handleDeleteSelected = () => {
         setDeleteError('');
-        console.log("deleted:", selectedRows);
         const selectedIds = Object.keys(selectedRows).filter(id => selectedRows[id]);
       
         axios.post(API_ROUTES.TEMEL_KONULAR_DELETE, { ids: selectedIds })
@@ -294,7 +300,6 @@ export default function TemelKonular() {
           // biz burada dosyayı evvele hemen backende atmadan ön yüzde göstermek istediğimizden
           // base64 e çeviririz.
           if (fieldName === "kapak_fotografi") {
-            console.log("photo:",file)
             const reader = new FileReader();
             reader.onload = (e) => {
               setSelectedItem((prevItem) => ({
@@ -338,7 +343,6 @@ export default function TemelKonular() {
       const handleFileChangeEkle = (event, fieldName) => {
         const file = event.target.files[0];
         if (fieldName === "kapakFotografi") {
-          console.log("photo:",file)
           const reader = new FileReader();
           reader.onload = (e) => {
             setNewItem((prevItem) => ({
@@ -606,7 +610,7 @@ export default function TemelKonular() {
 
           <DialogActions>
               <Button onClick={() => handleSave(selectedItem)} color="primary">
-                  Kaydet
+                {isSaving ? <CircularProgress size={24} /> : "Kaydet"}
               </Button>
           </DialogActions>
       </Dialog>
@@ -730,7 +734,7 @@ export default function TemelKonular() {
 
         <DialogActions>
           <Button onClick={handleAddNewItem} color="primary">
-            Ekle
+            {isSaving ? <CircularProgress size={24} /> : "Ekle"}
           </Button>
         </DialogActions>
       </Dialog>

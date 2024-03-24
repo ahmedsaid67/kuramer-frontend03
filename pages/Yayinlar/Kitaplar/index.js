@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Tabs, Tab, Typography } from '@mui/material';
+import { Tabs, Tab, Typography, Pagination } from '@mui/material';
 import TabPanel from '../../../compenent/TabPanel';
 import styles from '../../../styles/Kitaplar.module.css';
 import axios from 'axios';
@@ -7,18 +7,26 @@ import { useRouter } from 'next/router';
 import KitapCard from '../../../compenent/KitapCard';
 import KitapCardMobile from '../../../compenent/KitapCardMobile';
 import Head from 'next/head';
-import BaslikGorsel from '../../../compenent/BaslikGorsel';
+import BaslikGorselDetay from '../../../compenent/BaslikGorselDetay';
 import { API_ROUTES } from '../../../utils/constants';
+import Stack from '@mui/material/Stack';
+import CircularProgress from '@mui/material/CircularProgress'; 
+
 
 const convertToUrlFriendly = (text) => {
   if (text && typeof text === 'string') {
+    // Öncelikle metinden tek tırnak işaretlerini çıkar
+    const textWithoutApostrophes = text.replace(/'/g, '');
+    // Türkçe karakterler ve URL dostu hale getirme kuralları
     const turkishCharacters = { 'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u' };
-    const cleanedText = text.trim().toLowerCase();
+    const cleanedText = textWithoutApostrophes.trim().toLowerCase();
     const urlFriendlyText = Array.from(cleanedText).map(char => turkishCharacters[char] || char).join('');
+    // Boşlukları '-' ile değiştir
     return urlFriendlyText.replace(/\s+/g, '-');
   }
   return '';
 };
+
 
 function Kitaplar() {
   const [kategoriler, setKategoriler] = useState([]);
@@ -29,44 +37,150 @@ function Kitaplar() {
   const router = useRouter();
   const [isScrolTab, setIsScrolTab] = useState(false);
   const [variant, setVariant] = useState('fullWidth');
+  const [categoriesError, setCategoriesError] = useState(null)
+  const [categoriesLoading,setCategoriesLoading] = useState(true)
+  const [totalPages, setTotalPages] = useState(0);
+  const currentPage = parseInt(router.query.page || '1', 10);
+
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // Yükleme durumu için state
   
 
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchCategoriesAndValidateTab = async () => {
+      setCategoriesLoading(true);
       try {
         const response = await axios.get(API_ROUTES.KITAP_KATEGORI_ACTIVE);
-        setKategoriler(response.data);
-
-        // İlk aktif tab'ı URL'den veya ilk kategoriden ayarlama
-        const initialTab = router.query.tab ? convertToUrlFriendly(router.query.tab) : convertToUrlFriendly(response.data[0]?.baslik);
-        setActiveTab(initialTab);
+        const categories = response.data;
+  
+        // Kategorileri başarıyla çektikten sonra
+        setKategoriler(categories);
+  
+        // URL'deki `tab` parametresini URL dostu bir string'e çevir
+        const tabUrlFriendly = router.query.tab ? convertToUrlFriendly(router.query.tab) : null;
+  
+        // URL'deki `tab`'ın geçerli olup olmadığını kontrol et
+        const isValidTab = categories.some(category => convertToUrlFriendly(category.baslik) === tabUrlFriendly);
+  
+        if (tabUrlFriendly && !isValidTab) {
+          const fakeInitialTab = categories.length > 0 ? convertToUrlFriendly(categories[0].baslik) : '';
+          setActiveTab(fakeInitialTab)
+          router.push('/hata-sayfasi');
+        } else {
+          // Eğer `tab` geçerliyse veya `tab` belirtilmemişse, initial tab'ı set et
+          const initialTab = tabUrlFriendly || convertToUrlFriendly(categories[0]?.baslik);
+          setActiveTab(initialTab);
+        }
+  
+        setCategoriesError(null);
       } catch (error) {
-        console.error('Kategoriler yüklenirken hata:', error);
+        console.error('Kategoriler yüklenirken hata oluştu:', error);
+        setCategoriesError('Veriler yüklenirken beklenmeyen bir sorun oluştu. Lütfen daha sonra tekrar deneyin.');
+      } finally {
+        setCategoriesLoading(false);
       }
     };
+  
+    fetchCategoriesAndValidateTab();
+  }, [router.query.tab]);
 
-    fetchCategories();
-  }, []); // Bu useEffect yalnızca bileşen yüklendiğinde çalışır
 
-  // Aktif tab veya kategoriler değiştiğinde kitapları fetch etme
+  const fetchBooks = async (kategoriId,page) => {
+    setIsLoading(true);
+    try {
+      const kitapResponse = await axios.get(API_ROUTES.KITAPLAR_KATEGORI_FILTER.replace("seciliKategori", kategoriId).replace("currentPage",page));
+      setKitaplar(kitapResponse.data.results);
+      setTotalPages(Math.ceil(kitapResponse.data.count / 10));
+      setError(null);
+    } catch (error) {
+      console.error("Veri yükleme sırasında bir hata oluştu:", error);
+      if (error.response && error.response.status === 404 && error.response.data.detail === "Invalid page.") {
+        // 'Invalid page' detayını kontrol eden ve buna göre hata mesajı döndüren koşul
+        setError('Geçersiz sayfa. Bu sayfa mevcut değil veya sayfa numarası hatalı. Lütfen sayfa numarasını kontrol edin.');
+      } else {
+        setError('Veriler yüklenirken beklenmeyen bir sorun oluştu. Lütfen daha sonra tekrar deneyin.');
+      }
+    }finally {
+      setIsLoading(false); // Yükleme işlemi tamamlandığında veya hata oluştuğunda
+    }
+  };
+  
+  
   useEffect(() => {
-    const fetchBooks = async (kategoriId) => {
-      try {
-        const kitapResponse = await axios.get(API_ROUTES.KITAPLAR_KATEGORI_FILTER_PAGINATIONSUZ.replace("seciliKategori", kategoriId));
-        setKitaplar(kitapResponse.data.results);
-      } catch (error) {
-        console.error('Kitaplar yüklenirken hata:', error);
-      }
-    };
-
     if (activeTab && kategoriler.length > 0) {
       const selectedKategori = kategoriler.find(k => convertToUrlFriendly(k.baslik) === activeTab);
       if (selectedKategori) {
-        fetchBooks(selectedKategori.id);
+        fetchBooks(selectedKategori.id,currentPage);
       }
     }
-  }, [activeTab, kategoriler]);
+  }, [kategoriler]);
+
+  useEffect(() => {
+    if (router.query.tab && kategoriler.length > 0) {
+      const selectedKategori = kategoriler.find(k => convertToUrlFriendly(k.baslik) === router.query.tab);
+      if (selectedKategori) {
+        fetchBooks(selectedKategori.id,currentPage);
+      }
+      
+    }
+  }, [kategoriler,currentPage]);
+
+  
+
+  const handleTabChange = (event, newValue) => {
+    
+    setActiveTab(newValue);
+    const selectedKategori = kategoriler.find(k => convertToUrlFriendly(k.baslik) === newValue);
+    if (selectedKategori) {
+      fetchBooks(selectedKategori.id,1);
+    }
+    router.push(`/yayinlar/kitaplar?tab=${newValue}`, undefined, { shallow: true });
+
+  };
+
+  const handlePageChange = (event, value) => {
+    const selectedKategori = kategoriler.find(k => convertToUrlFriendly(k.baslik) === activeTab);
+    if (selectedKategori) {
+      fetchBooks(selectedKategori.id,value);
+    }
+    router.push(`/yayinlar/kitaplar?tab=${activeTab}&page=${value}`);
+  };
+
+
+
+  useEffect(() => {
+    const calculateTabWidths = () => {
+      const containerWidth = window.innerWidth; 
+      const maxTabWidth = 200; 
+      const minTabWidth = 100;
+      const tabPadding = 30; 
+    
+      let tabWidth = Math.max(containerWidth / kategoriler.length - tabPadding, minTabWidth);
+      
+
+      if (tabWidth > maxTabWidth) {
+        tabWidth = maxTabWidth;
+      }
+      
+      const totalTabsWidth = kategoriler.length * (tabWidth + tabPadding);
+
+      if (totalTabsWidth > containerWidth) {
+        setVariant('scrollable');
+      } else {
+        setVariant('fullWidth');
+      }
+    };
+  
+    calculateTabWidths();
+    window.addEventListener('resize', calculateTabWidths);
+  
+    return () => {
+      window.removeEventListener('resize', calculateTabWidths);
+    };
+  }, [kategoriler]); 
+
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -86,103 +200,104 @@ function Kitaplar() {
     };
   }, []);
 
-  const handleTabChange = (event, newValue) => {
-    router.push(`/Yayinlar/Kitaplar?tab=${newValue}`, undefined, { shallow: true });
-    setActiveTab(newValue);
 
-    const selectedCategoryId = kategoriler.find(kategori => convertToUrlFriendly(kategori.baslik) === newValue)?.id;
-    if (selectedCategoryId) {
-      axios.get(API_ROUTES.KITAPLAR_KATEGORI_FILTER_PAGINATIONSUZ.replace("seciliKategori",selectedCategoryId))
-        .then(response => {
-          setKitaplar(response.data.results);
-        })
-        .catch(error => console.error('Kitaplar yüklenirken hata:', error));
-    }
-  };
-
-
-
-  useEffect(() => {
-    const calculateTabWidths = () => {
-      const containerWidth = window.innerWidth; 
-      const maxTabWidth = 200; 
-      const minTabWidth = 100;
-      const tabPadding = 30; 
-    
-      let tabWidth = Math.max(containerWidth / kategoriler.length - tabPadding, minTabWidth);
-      
-
-      if (tabWidth > maxTabWidth) {
-        tabWidth = maxTabWidth;
-      }
-      
-
-      const totalTabsWidth = kategoriler.length * (tabWidth + tabPadding);
-  
-
-
-      if (totalTabsWidth > containerWidth) {
-        setVariant('scrollable');
-      } else {
-        setVariant('fullWidth');
-      }
-    };
-  
-    calculateTabWidths();
-    window.addEventListener('resize', calculateTabWidths);
-  
-    return () => {
-      window.removeEventListener('resize', calculateTabWidths);
-    };
-  }, [kategoriler]); 
 
 
   return (
     <>
       <Head>
         <title>Kitaplar | Kuramer</title>
+        <link rel="icon" href="/kuramerlogo.png" />
       </Head>
 
-      <BaslikGorsel metin={"Kitaplar"} />
+      <BaslikGorselDetay metin={"Kitaplar"} link={"/yayinlar"} />
 
-      <div className={styles.mainContainer}>
-        <div className={styles.leftContainer}>
-          <Tabs
-            orientation={orientation}
-            variant={isScrolTab ? variant : "standard"}
-            scrollButtons={isScrolTab ? "auto" : false}
-            value={activeTab}
-            onChange={handleTabChange}
-            className={styles.verticalTabs}
-            aria-label="Vertical tabs example"
-            centered={!isScrolTab}
-          >
-            {kategoriler.map(kategori => (
-              <Tab  className={styles.tab} key={kategori.id} label={<Typography  component="span" className={styles.tabLabel}>{kategori.baslik}</Typography>} value={convertToUrlFriendly(kategori.baslik)} />
-            ))}
-          </Tabs>
-        </div>
+      
+      { categoriesLoading ? (
+        <div className={styles.loader}>
+        <CircularProgress /> 
+        </div>)
+        : categoriesError ? (
+        <div className={styles.errorMessage}>{categoriesError}</div>
+      )
+      : kategoriler.length > 0 ? (
+        <div className={styles.mainContainer}>
+          <div className={styles.leftContainer}>
+            <Tabs
+              orientation={orientation}
+              variant={isScrolTab ? variant : "standard"}
+              scrollButtons={isScrolTab ? "auto" : false}
+              value={activeTab}
+              onChange={handleTabChange}
+              className={styles.verticalTabs}
+              aria-label="Vertical tabs example"
+              centered={!isScrolTab}
+            >
+              {kategoriler.map(kategori => (
+                <Tab className={styles.tab} key={kategori.id} label={<Typography component="span" className={styles.tabLabel}>{kategori.baslik.toLocaleUpperCase('tr-TR')}</Typography>} value={convertToUrlFriendly(kategori.baslik)} />
+              ))}
+            </Tabs>
+          </div>
 
-        <div className={styles.rightContainer}>
-          <div className={styles.verticalTabsContent}>
-            {kategoriler.map(kategori => (
-              <TabPanel key={kategori.id} value={activeTab} index={convertToUrlFriendly(kategori.baslik)}>
-                <h2>{kategori.baslik}</h2>
-                <div className={styles.cardContainer}>
-                  {isMobile
-                    ? kitaplar.map((kitap, index) => (
-                        <KitapCardMobile key={index} kitap={kitap} />
-                      ))
-                    : kitaplar.map((kitap, index) => (
-                        <KitapCard key={index} kitap={kitap} />
-                      ))
-                  }
-                </div>
-              </TabPanel>
-            ))}
+          <div className={styles.rightContainer}>
+            <div className={styles.verticalTabsContent}>
+              {kategoriler.map(kategori => (
+                <TabPanel key={kategori.id} value={activeTab} index={convertToUrlFriendly(kategori.baslik)}>
+                  <h2>{kategori.baslik}</h2>
+
+                  {isLoading ? (
+                    <div className={styles.loader}>
+                      <CircularProgress /> {/* Yükleme göstergesi */}
+                    </div>
+                    ) : error ? (
+                      <div className={styles.errorMessage}>{error}</div>
+                    ) : kitaplar.length > 0 ? (
+                      <div className={styles.cardContainer}>
+                        {isMobile
+                        ? kitaplar.map((kitap, index) => (
+                            <KitapCardMobile key={index} kitap={kitap} />
+                          ))
+                        : kitaplar.map((kitap, index) => (
+                            <KitapCard key={index} kitap={kitap} />
+                          ))
+                        }
+                      </div>
+                    ) : (
+                      <div className={styles.noDataMessage}>Kayıtlı veri bulunmamaktadır.</div> // Veri yoksa bu mesaj gösterilir
+                    )
+                    
+                    }
+
+                  {!isLoading && !error && totalPages > 0 && (
+                    <Stack spacing={2} alignItems="center" className={styles.paginationContainer}>
+                      <Pagination
+                        count={totalPages}
+                        page={currentPage}
+                        onChange={handlePageChange}
+                        variant="outlined"
+                        shape="rounded"
+                        sx={{
+                          '& .MuiPaginationItem-root': { color: 'inherit' },
+                          '& .MuiPaginationItem-page.Mui-selected': {
+                            backgroundColor: '#2e5077',
+                            color: '#fff',
+                            '&:hover': {
+                              backgroundColor: '#1a365d',
+                            },
+                          },
+                        }}
+                      />
+                    </Stack>
+                  )}
+                </TabPanel>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      ): (
+        <div className={styles.infoMessage}>Kayıtlı Kitap Kategori verisi bulunmamaktadır.</div>)
+      }
+
     </>
   );
 }

@@ -64,6 +64,7 @@ export default function Mushaflar() {
     const [uyariMesajiEkle, setUyariMesajiEkle] = useState("");
     const [kitapKategoriler, setKitapKategoriler] = useState([]);
     const [selectedKategori, setSelectedKategori] = useState("");
+    const [isSaving, setIsSaving] = useState(false);
 
     const user = useSelector((state) => state.user);
     const router = useRouter();
@@ -158,7 +159,6 @@ export default function Mushaflar() {
       const handleOpen = (item) => {
         setSelectedItem(item);
         setOpen(true);
-        console.log("item:",item)
         if (item.kitap_kategori){
           setSelectedKategori(item.kitap_kategori.id)
         }
@@ -174,7 +174,6 @@ export default function Mushaflar() {
     
     
       const handleSave = (editedItem,kategoriId) => {
-        console.log("edititem:",editedItem)
   
         if (!editedItem.ad || !editedItem.kapak_fotografi || !editedItem.yazar || !editedItem.yayin_tarihi || !editedItem.sayfa_sayisi || !editedItem.isbn || !editedItem.ozet || !kategoriId   ) {
           setUyariMesaji("Lütfen tüm alanları doldurunuz.");
@@ -203,7 +202,7 @@ export default function Mushaflar() {
 
         
         
-
+        setIsSaving(true);
         axios.put(API_ROUTES.KITAPLAR_DETAIL.replace("slug",editedItem.slug), formData)
           .then(response => {
             const updatedData = data.map(item => item.id === editedItem.id ? response.data : item);
@@ -214,6 +213,9 @@ export default function Mushaflar() {
           .catch(error => {
             console.error('Güncelleme sırasında hata oluştu:', error);
             setSaveError("Veri güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz.");  // Hata mesajını ayarla
+          })
+          .finally(() => {
+            setIsSaving(false); // İşlem tamamlandığında veya hata oluştuğunda
           });
       };
     
@@ -240,7 +242,8 @@ export default function Mushaflar() {
         formData.append("durum", newItem["durum"])
 
         formData.append("kitap_kategori_id", kategoriId);
-
+        
+        setIsSaving(true);
         axios.post(API_ROUTES.KITAPLAR, formData)
           .then(response => {
             // Mevcut sayfayı yeniden yüklüyoru
@@ -258,8 +261,11 @@ export default function Mushaflar() {
           })
           .catch(error => {
             console.error('Yeni veri eklerken hata oluştu:', error);
-            setSaveError("Veri güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz."); 
-          });
+            setSaveError("Yeni veri eklemesi sırasında bir hata meydana geldi. Lütfen işleminizi tekrar gerçekleştirmeyi deneyiniz."); 
+          })
+          .finally(() => {
+            setIsSaving(false); // İşlem tamamlandığında veya hata oluştuğunda
+          })
       };
       
       
@@ -281,7 +287,6 @@ export default function Mushaflar() {
     };
     const handleDeleteSelected = () => {
       setDeleteError('');
-      console.log("deleted:", selectedRows);
       const selectedIds = Object.keys(selectedRows).filter(id => selectedRows[id]);
     
       axios.post(API_ROUTES.KITAPLAR_DELETE, { ids: selectedIds })
@@ -344,7 +349,6 @@ export default function Mushaflar() {
 
 
           if (fieldName === "kapak_fotografi") {
-            console.log("photo:",file)
             const reader = new FileReader();
             reader.onload = (e) => {
               setSelectedItem((prevItem) => ({
@@ -384,7 +388,6 @@ export default function Mushaflar() {
       const handleFileChangeEkle = (event, fieldName) => {
         const file = event.target.files[0];
         if (fieldName === "kapakFotografi") {
-          console.log("photo:",file)
           const reader = new FileReader();
           reader.onload = (e) => {
             setNewItem((prevItem) => ({
@@ -574,9 +577,11 @@ export default function Mushaflar() {
                           label="Yayın Tarihi"
                           value={selectedItem && selectedItem.yayin_tarihi ? parseISO(selectedItem.yayin_tarihi) : null}
                           onChange={(newValue) => {
-                              const formattedDate = newValue ? format(newValue, "yyyy-MM-dd") : '';
-                              setSelectedItem({ ...selectedItem, yayin_tarihi: formattedDate });
-                          }}
+                            // newValue'nin geçerli bir tarih olup olmadığını kontrol et
+                            const isValidDate = newValue && !isNaN(new Date(newValue).getTime());
+                            const formattedDate = isValidDate ? format(newValue, "yyyy-MM-dd") : '';
+                            setSelectedItem({ ...selectedItem, yayin_tarihi: formattedDate });
+                        }}
                           format="dd.MM.yyyy"
                       />
                   </div>
@@ -695,7 +700,7 @@ export default function Mushaflar() {
 
           <DialogActions>
               <Button onClick={() => handleSave(selectedItem,selectedKategori)} color="primary">
-                  Kaydet
+                {isSaving ? <CircularProgress size={24} /> : "Kaydet"}
               </Button>
           </DialogActions>
       </Dialog>
@@ -732,16 +737,18 @@ export default function Mushaflar() {
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={trLocale}>
             <div style={{ marginTop: '10px', marginBottom: '10px' }}>
                 <DatePicker
-                    label="Tarih"
+                    label="Yayın Tarihi"
                     value={newItem.yayinTarihi ? parseISO(newItem.yayinTarihi) : null}
                     onChange={(newValue) => {
-                        const formattedDate = newValue ? format(newValue, "yyyy-MM-dd") : '';
-                        setNewItem({ ...newItem, yayinTarihi: formattedDate });
+                      // Yeni değerin geçerli bir tarih objesi olup olmadığını kontrol et
+                      const isValidDate = newValue && !isNaN(new Date(newValue).getTime());
+                      const formattedDate = isValidDate ? format(newValue, "yyyy-MM-dd") : '';
+                      setNewItem({ ...newItem, yayinTarihi: formattedDate });
                     }}
                     PopperProps={{
                         component: CustomPopper
                     }}
-                    format="dd MMMM yyyy" 
+                    format="dd.MM.yyyy" 
                 />
             </div>
         </LocalizationProvider>
@@ -872,7 +879,7 @@ export default function Mushaflar() {
 
         <DialogActions>
           <Button onClick={()=>{handleAddNewItem(selectedKategori)}} color="primary">
-            Ekle
+            {isSaving ? <CircularProgress size={24} /> : "Ekle"}
           </Button>
         </DialogActions>
       </Dialog>

@@ -6,6 +6,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -13,10 +14,17 @@ const PdfViewer = ({ pdfDataFile, setShowPdfViewer, showPdfViewer }) => {
     const [fileUrl, setFileUrl] = useState(null);
     const [numPages, setNumPages] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [error, setError] = useState(null);
     const viewerRef = useRef();
 
     const onDocumentLoadSuccess = ({ numPages }) => {
         setNumPages(numPages);
+        setError(null);
+    };
+
+    const onDocumentLoadError = (error) => {
+        console.error('PDF load error:', error);
+        setError('PDF yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.');
     };
 
     const onClose = () => {
@@ -24,18 +32,20 @@ const PdfViewer = ({ pdfDataFile, setShowPdfViewer, showPdfViewer }) => {
     };
 
     useEffect(() => {
+        let url;
         if (pdfDataFile instanceof File || pdfDataFile instanceof Blob) {
-            setFileUrl(URL.createObjectURL(pdfDataFile));
+            url = URL.createObjectURL(pdfDataFile);
+            setFileUrl(url);
         } else if (typeof pdfDataFile === 'string') {
             setFileUrl(pdfDataFile);
         }
-
         return () => {
-            if (fileUrl) {
-                URL.revokeObjectURL(fileUrl);
+            if (url) {
+                URL.revokeObjectURL(url);
             }
         };
     }, [pdfDataFile]);
+    
 
     const handleScroll = () => {
         const { scrollTop, clientHeight } = viewerRef.current;
@@ -62,7 +72,7 @@ const PdfViewer = ({ pdfDataFile, setShowPdfViewer, showPdfViewer }) => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '80vh'
+        height: '80vh',
     };
 
     return (
@@ -82,14 +92,17 @@ const PdfViewer = ({ pdfDataFile, setShowPdfViewer, showPdfViewer }) => {
                         <Document
                             file={fileUrl}
                             onLoadSuccess={onDocumentLoadSuccess}
+                            onError={onDocumentLoadError}
                             loading={<div style={loadingStyle}><CircularProgress /></div>}
                         >
                             {Array.from(new Array(numPages), (el, index) => (
                                 <div key={`page_${index + 1}`} style={pageStyle}>
-                                    <Page pageNumber={index + 1} renderTextLayer={false} />
+                                    <Page pageNumber={index + 1} renderTextLayer={false} loading={<></>} />
+
                                 </div>
                             ))}
                         </Document>
+                        {error && <Alert severity="error">{error}</Alert>}
                     </div>
                 ) : (
                     <div style={loadingStyle}>
@@ -101,4 +114,4 @@ const PdfViewer = ({ pdfDataFile, setShowPdfViewer, showPdfViewer }) => {
     );
 };
 
-export default PdfViewer;
+export default PdfViewer

@@ -1,7 +1,6 @@
-// TemelKonuKavramlar.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {Tab, Tabs, Typography} from '@mui/material';
+import { Tab, Tabs, Typography, Pagination } from '@mui/material';
 import CardOge from '../../compenent/CardOge';
 import TabPanel from '../../compenent/TabPanel';
 import styles from '../../styles/TemelKonularKavram.module.css';
@@ -9,38 +8,99 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import BaslikGorsel from '../../compenent/BaslikGorsel';
 import { API_ROUTES } from '../../utils/constants';
+import Stack from '@mui/material/Stack';
+import CircularProgress from '@mui/material/CircularProgress'; // Yükleme göstergesi için ekleyin
+
 
 function Index() {
   const [temelKonular, setTemelKonular] = useState([]);
-  const [visible, setVisible] = useState(12);
   const [temelKavramlar, setTemelKavramlar] = useState([]);
   const [activeTab, setActiveTab] = useState('temel-konu-kavramlar');
   const router = useRouter();
-  const [orientation, setOrientation] = useState('vertical'); // Default olarak 'vertical'
+  const [orientation, setOrientation] = useState('vertical');
+  const currentPage = parseInt(router.query.page || '1', 10);
+  const [totalPagesKonu, setTotalPagesKonu] = useState(0);
+  const [totalPagesKavram, setTotalPagesKavram] = useState(0);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const tab = router.query.tab || 'temel-konu-kavramlar';
+
+  
+
+  // Veri alma işlemini yapan fonksiyon
+  const fetchData = async (tab, page) => {
+
+    setIsLoading(true);
+    try {
+      let response;
+      if (tab === "temel-konular") {
+        const temelKonularUrl = API_ROUTES.TEMEL_KONULAR_ACTIVE.replace('currentPage', page);
+        response = await axios.get(temelKonularUrl);
+        setTemelKonular(response.data.results);
+        setTotalPagesKonu(Math.ceil(response.data.count / 10));
+      } else if (tab === "temel-kavramlar") {
+        const temelKavramlarUrl = API_ROUTES.TEMEL_KAVRAMLAR_ACTIVE.replace('currentPage', page);
+        response = await axios.get(temelKavramlarUrl);
+        setTemelKavramlar(response.data.results);
+        setTotalPagesKavram(Math.ceil(response.data.count / 10));
+      }
+      setError(null);
+    } catch (error) {
+      console.error("Veri yükleme sırasında bir hata oluştu:", error);
+      if (error.response && error.response.status === 404 && error.response.data.detail === "Invalid page.") {
+        // 'Invalid page' detayını kontrol eden ve buna göre hata mesajı döndüren koşul
+        setError('Geçersiz sayfa. Bu sayfa mevcut değil veya sayfa numarası hatalı. Lütfen sayfa numarasını kontrol edin.');
+      } else {
+        setError('Veriler yüklenirken beklenmeyen bir sorun oluştu. Lütfen daha sonra tekrar deneyin.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // İlk yükleme için veri alma
+  useEffect(() => {
+    fetchData(tab, currentPage);
+  }, []); // Boş dizi, bu effect'in sadece bileşen mount edildiğinde çalışacağını garanti eder
+
+  
+
+  // Sekme değişikliği işleyici
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+    fetchData(newValue, 1); // Sekme değiştiğinde, 1. sayfadan başlayarak veri yükle
+    router.push(`/temel-konu-kavramlar?tab=${newValue}`, undefined, { shallow: true });
+  };
+
+  // Sayfa değiştirme işleyici
+  const handleChangePage = (event, value) => {
+    fetchData(activeTab, value);
+    router.push(`/temel-konu-kavramlar?tab=${activeTab}&page=${value}`, undefined, { shallow: true });
+  };
+
+
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const response1 = await axios.get(API_ROUTES.TEMEL_KONULAR_ACTIVE);
-        setTemelKonular(response1.data.results);
-        const response2 = await axios.get(API_ROUTES.TEMEL_KAVRAMLAR_ACTIVE);
-        setTemelKavramlar(response2.data.results);
-      } catch (error) {
-        console.error('Hata oluştu:', error);
+    const handleRouteChange = () => {
+      const newTab = router.query.tab;
+      const validTabs = ['temel-konu-kavramlar', 'temel-konular', 'temel-kavramlar']; // Geçerli tab değerlerinin listesi
+  
+      if (validTabs.includes(newTab)) {
+        setActiveTab(newTab);
+        fetchData(newTab, currentPage);
+      } else if (newTab) {
+        router.push('/hata-sayfasi');
       }
+
     };
 
-    getData();
-  }, []);
+    handleRouteChange()
 
+  
+  }, [router.query.tab,currentPage]); // router.query.tab'e bağlı olarak çalışacak
+
+  // Ekran boyutuna göre sekme yönünü ayarlama
   useEffect(() => {
-    if (router.query.tab) {
-      setActiveTab(router.query.tab);
-    } else {
-      setActiveTab('temel-konu-kavramlar');
-    }
-
-    // Ekran genişliğine bağlı olarak orientation'ı ayarla
     const handleResize = () => {
       if (window.innerWidth <= 1100) {
         setOrientation('horizontal');
@@ -48,83 +108,41 @@ function Index() {
         setOrientation('vertical');
       }
     };
-
-    // Sayfa yüklendiğinde ve pencere boyutu değiştiğinde kontrol et
     handleResize();
     window.addEventListener('resize', handleResize);
-
-    // Temizlik fonksiyonu, event listener'ı kaldırır
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [router.query.tab]);
-
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
-    router.push(`/temel-konu-kavramlar?tab=${newValue}`, undefined, { shallow: true });
-  };
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleDownloadPDF = (pdfData) => {
     window.open(pdfData.url, '_blank');
   };
 
-  
-
   return (
     <>
       <Head>
         <title>Temel Konu ve Kavramlar | Kuramer</title>
+        <link rel="icon" href="/kuramerlogo.png" />
       </Head>
-      
       <BaslikGorsel metin={"Temel Konu ve Kavramlar"} />
-
-      
-
       <div className={styles.mainContainer}>
         <div className={styles.leftContainer}>
-        <Tabs
-          orientation={orientation}
-          variant="fullWidth"
-          value={activeTab}
-          onChange={handleTabChange}
-          className={styles.verticalTabs}
-          aria-label="Vertical tabs example"
-          centered
-        >
-          <Tab
-            className={styles.tab}
-            label={
-              <Typography className={styles.tabLabel}>
-                Temel Konu ve Kavramlar
-              </Typography>
-            }
-            value="temel-konu-kavramlar"
-          />
-          <Tab
-            className={styles.tab}
-            label={
-              <Typography className={styles.tabLabel}>
-                Temel Konular
-              </Typography>
-            }
-            value="temel-konular"
-          />
-          <Tab
-            className={styles.tab}
-            label={
-              <Typography className={styles.tabLabel}>
-                Temel Kavramlar
-              </Typography>
-            }
-            value="temel-kavramlar"
-          />
-        </Tabs>
+          <Tabs
+            orientation={orientation}
+            variant="fullWidth"
+            value={activeTab}
+            onChange={handleTabChange}
+            className={styles.verticalTabs}
+            centered
+          >
+            <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>Temel Konu ve Kavramlar</Typography>} value="temel-konu-kavramlar" />
+            <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>Temel Konular</Typography>} value="temel-konular" />
+            <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>Temel Kavramlar</Typography>} value="temel-kavramlar" />
+          </Tabs>
         </div>
-
         <div className={styles.rightContainer}>
           <div className={styles.verticalTabsContent}>
             <TabPanel value={activeTab} index="temel-konu-kavramlar">
-              <h2>Temel Konu ve Kavramlar</h2>
+            <h2>Temel Konu ve Kavramlar</h2>
               <p>
                 Merkezimiz kuruluşundan bu yana ilmî-akademik seviyede çeşitli projeler yürütmeye
                 ve bunların ürünlerini yayımlayarak kamuoyuna ulaştırmaya gayret etmektedir.
@@ -157,23 +175,89 @@ function Index() {
                 sunulması hedeflenmektedir.
               </p>
             </TabPanel>
-
-            <TabPanel value={activeTab} index="temel-konular">
-              <h2>Temel Konular</h2>
-              <div className={styles.cardContainer}>
-                {temelKonular.slice(0, visible).map((yayin, index) => (
-                  <CardOge key={index} yayin={yayin} handleDownloadPDF={handleDownloadPDF} />
-                ))}
-              </div>
+            <TabPanel value={activeTab} index="temel-konular">      
+            <h2>Temel Konular</h2>
+              {isLoading ? (
+                <div className={styles.loader}>
+                  <CircularProgress />
+                </div>
+              ) : error ? (
+                <div className={styles.errorMessage}>
+                  {error}
+                </div>
+              ) : temelKonular.length > 0 ? (
+                <div className={styles.cardContainer}>
+                  {temelKonular.map((yayin, index) => (
+                    <CardOge key={index} yayin={yayin} handleDownloadPDF={handleDownloadPDF} />
+                  ))}
+                </div>
+              ) : (
+                <div className={styles.noDataMessage}> Kayıtlı veri bulunmamaktadır. </div> 
+              )}
+              {!isLoading && !error && totalPagesKonu > 0 && (
+                <Stack spacing={2} alignItems="center" className={styles.paginationContainer}>
+                  <Pagination 
+                    count={totalPagesKonu} 
+                    page={currentPage} 
+                    onChange={handleChangePage} 
+                    variant="outlined" 
+                    shape="rounded" 
+                    sx={{
+                      '& .MuiPaginationItem-root': { color: 'inherit' },
+                      '& .MuiPaginationItem-page.Mui-selected': {
+                        backgroundColor: '#2e5077',
+                        color: '#fff',
+                        '&:hover': {
+                          backgroundColor: '#1a365d',
+                        },
+                      },
+                    }}
+                  />
+                </Stack>
+              )}
             </TabPanel>
-
             <TabPanel value={activeTab} index="temel-kavramlar">
-              <h2>Temel Kavramlar</h2>
-              <div className={styles.cardContainer}>
-                {temelKavramlar.slice(0, visible).map((yayin, index) => (
-                  <CardOge key={index} yayin={yayin} handleDownloadPDF={handleDownloadPDF} />
-                ))}
-              </div>
+            <h2>Temel Kavramlar</h2>
+              {isLoading ? (
+                <div className={styles.loader}>
+                  <CircularProgress />
+                </div>
+              ) : error ? (
+                <div className={styles.errorMessage}>
+                  {error}
+                </div>
+              ) : temelKavramlar.length > 0 ? (
+                <div className={styles.cardContainer}>
+                  {temelKavramlar.map((yayin, index) => (
+                    <CardOge key={index} yayin={yayin} handleDownloadPDF={handleDownloadPDF} />
+                  ))}
+                </div>
+              ) : (
+                <div className={styles.noDataMessage}>
+                  Kayıtlı veri bulunmamaktadır.
+                </div>
+              )}
+              {!isLoading && !error && totalPagesKavram > 0 && (
+                <Stack spacing={2} alignItems="center" className={styles.paginationContainer}>
+                  <Pagination 
+                    count={totalPagesKavram} 
+                    page={currentPage} 
+                    onChange={handleChangePage} 
+                    variant="outlined" 
+                    shape="rounded" 
+                    sx={{
+                      '& .MuiPaginationItem-root': { color: 'inherit' },
+                      '& .MuiPaginationItem-page.Mui-selected': {
+                        backgroundColor: '#2e5077',
+                        color: '#fff',
+                        '&:hover': {
+                          backgroundColor: '#1a365d',
+                        },
+                      },
+                    }}
+                  />
+                </Stack>
+              )}
             </TabPanel>
           </div>
         </div>

@@ -1,6 +1,6 @@
 // TemelKonuKavramlar.js
 import React, { useState, useEffect } from 'react';
-import {Tab, Tabs, Typography } from '@mui/material';
+import {Tab, Tabs, Typography,Pagination } from '@mui/material';
 import Image from 'next/image';
 import TabPanel from '../../compenent/TabPanel';
 import styles from '../../styles/Kurumsal.module.css';
@@ -10,6 +10,8 @@ import BaslikGorsel from '../../compenent/BaslikGorsel';
 import axios from 'axios';
 import KamuoyuDuyurulariCardOge from '../../compenent/KamuoyuDuyurulariCardOge';
 import { API_ROUTES } from '../../utils/constants';
+import Stack from '@mui/material/Stack';
+import CircularProgress from '@mui/material/CircularProgress'; // Yükleme göstergesi için ekleyin
 
 
 function Index() {
@@ -18,32 +20,57 @@ function Index() {
   const [orientation, setOrientation] = useState('vertical'); // Default olarak 'vertical'
   const [isScrolTab, setIsScrolTab] = useState(false);
   const [kamuoyuDuyurulari,setKamuoyuDuyurulari] = useState([])
-  const [visible, setVisible] = useState(12);
+
+  const [totalPages, setTotalPages] = useState(0);
+  const [isLoading, setIsLoading] = useState(true); // Yükleme durumu için state
+  const [error, setError] = useState(null);
+  const currentPage = parseInt(router.query.page || '1', 10);
 
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response1 = await axios.get(API_ROUTES.KAMUOYU_DUYURULARI_ACTIVE);
-        setKamuoyuDuyurulari(response1.data.results); // Değişken adını güncelle
-       
-
-      } catch (error) {
-        console.error('Hata oluştu:', error);
+  const fetchData = async (page) => {
+    setIsLoading(true);
+    try {
+      const response1 = await axios.get(API_ROUTES.KAMUOYU_DUYURULARI_ACTIVE.replace('currentPage', page));
+      setKamuoyuDuyurulari(response1.data.results); // Değişken adını güncelle
+      setTotalPages(Math.ceil(response1.data.count / 10));
+      setError(null);
+    } catch (error) {
+      console.error("Veri yükleme sırasında bir hata oluştu:", error);
+      if (error.response && error.response.status === 404 && error.response.data.detail === "Invalid page.") {
+        // 'Invalid page' detayını kontrol eden ve buna göre hata mesajı döndüren koşul
+        setError('Geçersiz sayfa. Bu sayfa mevcut değil veya sayfa numarası hatalı. Lütfen sayfa numarasını kontrol edin.');
+      } else {
+        setError('Veriler yüklenirken beklenmeyen bir sorun oluştu. Lütfen daha sonra tekrar deneyin.');
       }
-    };
+    } finally {
+      setIsLoading(false); // Yükleme işlemi tamamlandığında veya hata oluştuğunda
+    }
+  };
 
-    fetchData();
-  }, []);
 
+
+  
 
   useEffect(() => {
     if (router.query.tab) {
-      setActiveTab(router.query.tab);
+      const validTabs = ['kurumsal', 'hakkimizda', 'ilkelerimiz', 'kurumsal-kimlik' , 'kamuoyu-duyurulari']; 
+      if (!validTabs.includes(router.query.tab)) {
+        router.push('/hata-sayfasi');
+      }else{
+        setActiveTab(router.query.tab);
+        if (router.query.tab=="kamuoyu-duyurulari"){
+          fetchData(currentPage);
+        }
+      }     
     } else {
       setActiveTab('kurumsal');
     }
+    
+  }, [router.query.tab,currentPage]);
 
+
+
+  useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 1100) {
         setOrientation('horizontal');
@@ -77,10 +104,23 @@ function Index() {
       router.push('/kurumsal/ilkelerimiz');
     } else if (newValue === 'personeller'){
       router.push('/kurumsal/personeller');
+    }else if (newValue === 'kamuoyu-duyurulari'){
+      fetchData(1);
+      router.push(`/kurumsal?tab=${newValue}`, undefined, { shallow: true });
     }else {
       // Diğer tablara tıklanırsa
       router.push(`/kurumsal?tab=${newValue}`, undefined, { shallow: true });
     }
+  };
+
+  const handleChangePage = (event, value) => {
+    fetchData(value);
+    router.push(`/kurumsal?tab=${activeTab}&page=${value}`, undefined, { shallow: true });
+  };
+
+
+  const handleDownloadPDF = (pdfData) => {
+    window.open(pdfData.url, '_blank');
   };
 
 
@@ -89,6 +129,7 @@ function Index() {
     <>
       <Head>
         <title>Kurumsal | Kuramer</title>
+        <link rel="icon" href="/kuramerlogo.png" />
       </Head>
 
       <BaslikGorsel metin={"Kurumsal"} />
@@ -108,8 +149,8 @@ function Index() {
               >
                 <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>Kurumsal</Typography>} value="kurumsal" />
                 <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>Hakkımızda</Typography>} value="hakkimizda" />
-                <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>İlkelerimiz</Typography>} value="ilkelerimiz" />
-                <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>Kurumsal Kimlik</Typography>} value="kurumsal-kimlik" />
+                <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>{("İlkelerimiz").toLocaleUpperCase('tr-TR')}</Typography>} value="ilkelerimiz" />
+                <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>{("Kurumsal Kimlik").toLocaleUpperCase('tr-TR')}</Typography>} value="kurumsal-kimlik" />
                 <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>Personeller</Typography>} value="personeller" />
                 <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>Kamuoyu Duyuruları</Typography>} value="kamuoyu-duyurulari" />
             </Tabs>
@@ -201,11 +242,46 @@ function Index() {
 
             <TabPanel value={activeTab} index="kamuoyu-duyurulari">
               <h2>Kamuoyu Duyuruları</h2>
-              <div className={styles.cardContainer}>
-                {kamuoyuDuyurulari.slice(0, visible).map((yayin, index) => (
-                  <KamuoyuDuyurulariCardOge key={index} yayin={yayin} />
-                ))}
-              </div>
+              {isLoading ? (
+                <div className={styles.loader}>
+                  <CircularProgress />
+                </div>
+              ) : error ? (
+                <div className={styles.errorMessage}>
+                  {error}
+                </div>
+              ) : kamuoyuDuyurulari.length > 0 ? (
+                <div className={styles.cardContainer}>
+                  {kamuoyuDuyurulari.map((yayin, index) => (
+                    <KamuoyuDuyurulariCardOge key={index} yayin={yayin} handleDownloadPDF={handleDownloadPDF} />
+                  ))}
+                </div>
+              ) : (
+                <div className={styles.noDataMessage}>
+                  Kayıtlı veri bulunmamaktadır.
+                </div>
+              )}
+              {!isLoading && !error && totalPages > 0 && (
+                <Stack spacing={2} alignItems="center" className={styles.paginationContainer}>
+                  <Pagination 
+                    count={totalPages} 
+                    page={currentPage} 
+                    onChange={handleChangePage} 
+                    variant="outlined" 
+                    shape="rounded" 
+                    sx={{
+                      '& .MuiPaginationItem-root': { color: 'inherit' },
+                      '& .MuiPaginationItem-page.Mui-selected': {
+                        backgroundColor: '#2e5077',
+                        color: '#fff',
+                        '&:hover': {
+                          backgroundColor: '#1a365d',
+                        },
+                      },
+                    }}
+                  />
+                </Stack>
+              )}
               
             </TabPanel>
           </div>

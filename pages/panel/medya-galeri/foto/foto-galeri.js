@@ -47,6 +47,7 @@ export default function FotoGaleri() {
     const [uyariMesajiEkle, setUyariMesajiEkle] = useState("");
     const [fotoGaleriKategoriler, setFotoGaleriKategoriler] = useState([]);
     const [selectedKategori, setSelectedKategori] = useState("");
+    const [isSaving, setIsSaving] = useState(false);
 
     const user = useSelector((state) => state.user);
     const router = useRouter();
@@ -145,7 +146,6 @@ export default function FotoGaleri() {
       const handleOpen = (item) => {
         setSelectedItem(item);
         setOpen(true);
-        console.log("item:",item)
         if(item.fotogaleri_kategori){
           setSelectedKategori(item.fotogaleri_kategori.id)
         }
@@ -187,6 +187,8 @@ export default function FotoGaleri() {
           formData.append("durum", editedItem["durum"]);
           formData.append("baslik", editedItem["baslik"]);
           formData.append("fotogaleri_kategori_id", kategoriId);
+
+          setIsSaving(true);
       
           const response = await axios.put(API_ROUTES.FOTO_GALERI_DETAIL.replace("id",editedItem.id), formData)
           const updatedData = data.map(item => item.id === editedItem.id ? response.data : item);
@@ -212,8 +214,10 @@ export default function FotoGaleri() {
       
           handleClose(); // İşlemler tamamlandıktan sonra pencereyi kapat
         } catch (error) {
-          console.error('İşlem sırasında hata oluştu:', error);
-          setSaveError("Bir hata oluştu. Lütfen tekrar deneyiniz.");
+          console.error('Güncelleme sırasında hata oluştu:', error);
+          setSaveError("Veri güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz.");  // Hata mesajını ayarla
+        }finally{
+          setIsSaving(false);
         }
       };
       
@@ -234,6 +238,8 @@ export default function FotoGaleri() {
         formData.append("durum", newItem["durum"]);
         formData.append("baslik", newItem["baslik"]);
         formData.append("fotogaleri_kategori_id", kategoriId);
+
+        setIsSaving(true);
       
         try {
           const fotogaleriResponse = await axios.post(API_ROUTES.FOTO_GALERI, formData);
@@ -258,7 +264,9 @@ export default function FotoGaleri() {
           handleCloseAddDialog();
         } catch (error) {
           console.error('İşlem sırasında hata oluştu:', error);
-          setSaveError("Veri güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz.");
+          setSaveError("Yeni veri eklemesi sırasında bir hata meydana geldi. Lütfen işleminizi tekrar gerçekleştirmeyi deneyiniz."); 
+        }finally{
+          setIsSaving(false);
         }
       };
       
@@ -280,7 +288,6 @@ export default function FotoGaleri() {
     };
     const handleDeleteSelected = () => {
       setDeleteError('');
-      console.log("deleted:", selectedRows);
       const selectedIds = Object.keys(selectedRows).filter(id => selectedRows[id]);
     
       axios.post(API_ROUTES.FOTO_GALERI_DELETE, { ids: selectedIds })
@@ -342,7 +349,6 @@ export default function FotoGaleri() {
         if (file) {
 
           if (fieldName === "kapak_fotografi") {
-            console.log("photo:",file)
             const reader = new FileReader();
             reader.onload = (e) => {
               setSelectedItem((prevItem) => ({
@@ -371,7 +377,6 @@ export default function FotoGaleri() {
       const handleFileChangeEkle = (event, fieldName) => {
         const file = event.target.files[0];
         if (fieldName === "kapakFotografi") {
-          console.log("photo:",file)
           const reader = new FileReader();
           reader.onload = (e) => {
             setNewItem((prevItem) => ({
@@ -406,7 +411,6 @@ export default function FotoGaleri() {
         const file = event.target.files[0];
       
         if (file) {
-            console.log("photo:",file)
             const reader = new FileReader();
             reader.onload = (e) => {
                 setCreateImageAlbum(prevItem => ([
@@ -419,23 +423,23 @@ export default function FotoGaleri() {
 
             };
             reader.readAsDataURL(file);
-            console.log("createImageAlbum:", createImageAlbum)
             event.target.value = '';
 
         } 
 
     };
 
-    const imgCreateAlbumRemove = (index) => {
-        // Önce createImageAlbum dizisinin bir kopyasını oluşturun
-        const newAlbum = [...createImageAlbum];
+    const imgCreateAlbumRemove = (uiIndex) => {
+      // UI'da görseller ters sıralı gösteriliyorsa, gerçek index'i hesapla
+      const realIndex = createImageAlbum.length - 1 - uiIndex;
     
-        // Belirtilen indeksteki öğeyi kaldırın
-        newAlbum.splice(index, 1);
+      // Güncellenmiş album dizisini oluştur
+      const updatedAlbum = createImageAlbum.filter((_, index) => index !== realIndex);
     
-        // Güncellenmiş diziyi state'e atayın
-        setCreateImageAlbum(newAlbum);
+      // Album state'ini güncelle
+      setCreateImageAlbum(updatedAlbum);
     };
+    
 
     function truncateText(text, maxLength) {
       return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
@@ -699,7 +703,7 @@ export default function FotoGaleri() {
 
           <DialogActions>
               <Button onClick={() => handleSave(selectedItem,selectedKategori)} color="primary">
-                  Kaydet
+                {isSaving ? <CircularProgress size={24} /> : "Kaydet"}
               </Button>
           </DialogActions>
       </Dialog>
@@ -860,7 +864,7 @@ export default function FotoGaleri() {
 
         <DialogActions>
           <Button onClick={()=>{handleAddNewItem(selectedKategori)}} color="primary">
-            Ekle
+            {isSaving ? <CircularProgress size={24} /> : "Ekle"}
           </Button>
         </DialogActions>
       </Dialog>

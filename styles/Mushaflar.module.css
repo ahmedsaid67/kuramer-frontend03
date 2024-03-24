@@ -76,6 +76,56 @@
   gap: 30px; /* Kartlar arasındaki boşluk */
 }
 
+.errorMessage {
+  color: #ff0000; /* Kırmızı metin rengi */
+  font-size: 18px; /* Metin boyutu */
+  text-align: center; /* Metni ortala */
+  padding: 20px; /* İç boşluk */
+  border: 1px solid #ff0000; /* Kırmızı çerçeve */
+  border-radius: 5px; /* Köşeleri yuvarlat */
+  margin: 20px auto; /* Üst ve alttan 20px boşluk, sağ ve solda otomatik merkezleme */
+  background-color: #ffcccc; /* Arka plan rengi */
+  max-width: 600px; /* Maksimum genişlik */
+}
+
+.infoMessage {
+  color: white; /* Kırmızı metin rengi */
+  font-size: 18px; /* Metin boyutu */
+  text-align: center; /* Metni ortala */
+  padding: 20px; /* İç boşluk */
+  border: 1px solid #2e5077; /* Kırmızı çerçeve */
+  border-radius: 5px; /* Köşeleri yuvarlat */
+  margin: 20px auto; /* Üst ve alttan 20px boşluk, sağ ve solda otomatik merkezleme */
+  background-color: #2e5077;/* Arka plan rengi */
+  max-width: 600px; /* Maksimum genişlik */
+}
+
+.paginationContainer {
+  margin-top: 40px;
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader {
+  display: flex;
+  justify-content: center; /* Loader'ı yatay olarak ortala */
+  align-items: center; /* Loader'ı dikey olarak ortala */
+  height: 50vh; /* Loader'ın yüksekliğini viewport yüksekliğine eşitle */
+}
+
+.noDataMessage {
+  text-align: center; /* Metni ortalar */
+  padding: 20px; /* Çevresine dolgu ekler */
+  font-size: 18px; /* Metin boyutunu ayarlar */
+  background-color: #2e5077; /* Arka plan rengi */
+  color: white;
+  border-radius: 8px; /* Kenar yuvarlaklığını ayarlar */
+  margin: 20px auto; /* Üst ve alttan boşluk bırakır ve yatayda ortalar */
+  max-width: 80%; /* Maksimum genişliği sınırlar */
+}
+
 /* Medya Sorguları */
 @media screen and (max-width: 1100px) {
   .bannerImage {
@@ -143,6 +193,15 @@
   }
   .cardContainer {
     justify-content: center;
+  }
+  .errorMessage {
+
+    max-width: 200px; /* Maksimum genişlik */
+  }
+
+  .infoMessage {
+
+    max-width: 200px; /* Maksimum genişlik */
   }
 
 }

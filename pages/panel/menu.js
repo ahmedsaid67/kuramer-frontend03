@@ -16,6 +16,7 @@ const MenuPage = () => {
   const user = useSelector((state) => state.user);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const getData = async () => {
     setIsLoading(true);
@@ -64,6 +65,8 @@ const MenuPage = () => {
       setAlert({ show: true, type: 'warning', message: 'Hiçbir değişiklik yapmadınız.' });
       return;
     }
+
+    setIsSaving(true);
     axios.patch(API_ROUTES.MENU_UPDATE, updatedChanges)
       .then(response => {
         setAlert({ show: true, type: 'success', message: 'Değişiklikler başarıyla kaydedildi.' });
@@ -75,6 +78,9 @@ const MenuPage = () => {
       })
       .catch(error => {
         setAlert({ show: true, type: 'error', message: 'Değişiklikleri kaydederken bir hata oluştu.' });
+      })
+      .finally(() => {
+        setIsSaving(false); // İşlem tamamlandığında veya hata oluştuğunda
       });
   };
 
@@ -124,7 +130,9 @@ const MenuPage = () => {
         ))}
       </Box>
       <Box sx={{ textAlign: 'center', marginTop: 2 }}>
-        <Button variant="contained" color="primary" size="small" onClick={handleSave}>Kaydet</Button>
+        <Button variant="contained" color="primary" size="small" onClick={handleSave}>
+          {isSaving ? "Kaydediliyor..." : "Kaydet"}
+        </Button>
       </Box>
       {alert.show && (
         <Alert severity={alert.type} onClose={() => setAlert({ show: false, type: '', message: '' })}>
