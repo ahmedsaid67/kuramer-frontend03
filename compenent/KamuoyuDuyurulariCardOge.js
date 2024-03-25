@@ -1,26 +1,24 @@
 import React from 'react';
 import { Card, CardContent, CardMedia, Button, Typography } from '@mui/material';
 
+
 const cardStyle = {
-  width: '240px',
-  height: '450px',
+  maxWidth: '250px',
+  height: 'auto',
   position: 'relative',
   marginBottom: 5,
   border: '1px solid #ccc',
-  overflow: 'hidden', // Görsel dışına taşmaları önle
-  borderRadius: 4, // Köşelerin kavisini kaldır
+  overflow: 'hidden',
+  borderRadius: 4,
   display: 'flex',
   flexDirection: 'column',
-  '@media (max-width: 768px)': {
-    width: '170px',
-    height: '320px',
-  },
+  minHeight: '470px',
 };
 
 const mediaStyle = {
   width: '100%',
-  height: '350px',
-  objectFit: 'cover', // Görseli belirli boyutlara sığdır
+  height: 'auto',
+  objectFit: 'contain',
 };
 
 const contentContainerStyle = {
@@ -28,13 +26,12 @@ const contentContainerStyle = {
   flexDirection: 'column',
   justifyContent: 'space-between',
   padding: '0.5rem',
-  
-  flex: 1, // İçerik konteynerini genişlet
+  flex: 1,
 };
 
 const titleStyle = {
   textAlign: 'center',
-  fontSize: '14px', // Font boyutunu küçült
+  fontSize: '14px',
   fontFamily: 'sans-serif',
   fontWeight: 550,
   color: '#343434',
@@ -42,22 +39,26 @@ const titleStyle = {
   textOverflow: 'ellipsis',
   display: '-webkit-box',
   WebkitBoxOrient: 'vertical',
-  WebkitLineClamp: 3, // En fazla 3 satır göster
-  '@media (max-width: 768px)': {
-    fontSize: '12px',
-  },
+  WebkitLineClamp: 3,
 };
-
 
 const buttonContainerStyle = {
   textAlign: 'center',
   padding: '0.5rem',
-  borderTop: '1px solid #ccc', // Üst kenara gri bir çizgi ekle
-  backgroundColor: 'white', // Arkaplan rengini beyaz yap
+  borderTop: '1px solid #ccc',
+  backgroundColor: 'white',
   position: 'sticky',
   bottom: 0,
   zIndex: 1,
 };
+
+const buttonStyle = {
+  fontSize: '12px',
+  width: '100%',
+  borderRadius: 0,
+};
+
+
 
 const dateStyle = {
   textAlign: 'center',
@@ -65,17 +66,12 @@ const dateStyle = {
   fontFamily: 'sans-serif',
   color: '#757575',
   marginTop: '0.5rem', // Başlık ile tarih arasında biraz boşluk bırak
-};
-
-
-const buttonStyle = {
-  fontSize: '12px',
-  width: '100%',
-  borderRadius: 0, // Köşelerin kavisini kaldır
   '@media (max-width: 768px)': {
-    fontSize:"10px"
+    fontSize:"10px", // Mobil görünümde font boyutunu küçült
   },
 };
+
+
 
 function KamuoyuDuyurulariCardOge({ yayin, handleDownloadPDF }) {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
@@ -95,7 +91,7 @@ function KamuoyuDuyurulariCardOge({ yayin, handleDownloadPDF }) {
         <Typography variant="h6" sx={titleStyle} onClick={handleTitleClick}>
           {yayin.baslik}
         </Typography>
-        <Typography sx={dateStyle}>
+        <Typography sx={dateStyle} variant='h6'>
           {new Date(yayin.tarih).toLocaleDateString('tr-TR', { day: '2-digit', month: 'long', year: 'numeric' })} {/* Tarihi "gün ay yıl" formatında göster */}
         </Typography>
       </CardContent>

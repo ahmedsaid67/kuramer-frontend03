@@ -83,7 +83,7 @@ function Personeller() {
     };
 
     fetchCategoriesAndValidateTab();
-  }, [router.query.tab]);
+  }, []);
 
 
 

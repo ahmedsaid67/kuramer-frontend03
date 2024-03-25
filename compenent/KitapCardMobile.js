@@ -20,6 +20,7 @@ const readMoreStyle = {
 const containerStyles = {
   paddingTop: 1,
   paddingBottom: 1,
+  marginBottom:2,
 };
 
 const titleStyle = {

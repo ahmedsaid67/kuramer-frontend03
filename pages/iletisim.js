@@ -16,22 +16,22 @@ export default function Iletisim() {
 
             <section className={styles.contactInfo}>
         <div className={styles.card}>
-          <h2>Adresimiz</h2>
+          <h3>Adresimiz</h3>
           <p>Elmalikent Mah. Elmalikent Cad. No:4 B Blok Kat:3 34764 Ümraniye / İstanbul</p>
         </div>
 
         <div className={styles.card}>
-          <h2>Telefon</h2>
+          <h3>Telefon</h3>
           <p>+90 216 474 08 60 / 2910 - 2918</p>
         </div>
 
         <div className={styles.card}>
-          <h2>E-posta</h2>
+          <h3>E-posta</h3>
           <p className={styles.mail}><a href="mailto:info@kuramer.org">info@kuramer.org</a></p>
         </div>
 
         <div className={styles.card} id={styles.socialCard}>
-          <h2>Bizi Takip Edin</h2>
+          <h3>Bizi Takip Edin</h3>
           <div className={styles.socialIcons}>
                     <a href="https://www.facebook.com/profile.php?id=100022853400645" target="_blank" rel="noopener noreferrer">
                         <img src="/icons/facebook.png" alt="Facebook" className={styles.icon} />

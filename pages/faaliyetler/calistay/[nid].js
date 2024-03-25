@@ -97,7 +97,7 @@ const infoMessageStyle = {
   textAlign: 'center', // Metni ortala
 };
 
-const calistay = () => {
+const Calistay = () => {
   const [calistay, setCalistay] = useState(null);
   const [viewerOpen, setViewerOpen] = useState(false);
   const [selectedAlbum, setSelectedAlbum] = useState(null);
@@ -362,4 +362,4 @@ const formatDateWithoutTimeZone = (dateString) => {
 };
 
 
-export default calistay;
+export default Calistay;

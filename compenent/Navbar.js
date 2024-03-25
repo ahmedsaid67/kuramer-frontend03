@@ -129,20 +129,27 @@ const Navbar = () => {
           <>
             {activeSubMenu === null ? (
               <ul className={styles.navMenu}>
-                {menuItems.filter(item => !item.parent).map(item => (
-                  <li key={item.id} 
-                      className={styles.navItem}
-                      onClick={() => handleSubMenuExpand(item.id)}>
-                      
-                        <div className={styles.linkMobilContainer}>
-                            {item.title}
-                        </div>
-                      
-                    {menuItems.some(subItem => subItem.parent === item.id) && (
+                {menuItems.filter(item => !item.parent).map(item => {
+                  // Alt öğesi olup olmadığını kontrol et
+                  const hasSubItems = menuItems.some(subItem => subItem.parent === item.id);
+
+                  return hasSubItems ? (
+                    // Alt öğesi varsa genişletme/daraltma fonksiyonunu tetikle
+                    <li key={item.id} className={styles.navItem} onClick={() => handleSubMenuExpand(item.id)}>
+                      <div className={styles.linkMobilContainer}>
+                        {item.title}
+                      </div>
                       <span className={styles.expandIcon}></span>
-                    )}
-                  </li>
-                ))}
+                    </li>
+                  ) : (
+                    // Alt öğesi yoksa doğrudan Link ile yönlendir
+                    <li key={item.id} className={styles.navItem}>
+                      <Link href={item.url}>
+                        <div className={styles.linkMobilContainer} onClick={() => setMenuOpen(false)} >{item.title}</div>
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             ) : (
               <>
@@ -152,6 +159,8 @@ const Navbar = () => {
             )}
           </>
         )}
+
+        
         {!isMobile && (
           <ul className={styles.navMenu}>
             {menuItems.filter(item => !item.parent).map(item => (

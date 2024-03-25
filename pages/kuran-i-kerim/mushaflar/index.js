@@ -82,7 +82,7 @@ function Mushaflar() {
     };
 
     fetchCategoriesAndValidateTab();
-  }, [router.query.tab]); // router.query.tab değiştiğinde useEffect tekrar çalışır
+  }, []); // router.query.tab değiştiğinde useEffect tekrar çalışır
 
 
 

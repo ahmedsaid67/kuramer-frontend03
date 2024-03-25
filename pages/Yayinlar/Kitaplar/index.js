@@ -83,7 +83,7 @@ function Kitaplar() {
     };
   
     fetchCategoriesAndValidateTab();
-  }, [router.query.tab]);
+  }, []);
 
 
   const fetchBooks = async (kategoriId,page) => {
