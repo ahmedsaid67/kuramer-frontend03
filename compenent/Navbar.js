@@ -45,6 +45,13 @@ const Navbar = () => {
     }
   };
 
+  const handleLogoClick = () => {
+    // Eğer bir alt menü açıksa, kapat
+    if (isMobile && menuOpen ) {
+      setMenuOpen(false)
+    }
+  };
+
   const renderSubMenu = (parentId) => {
     return (
       <ul className={styles.subMenu}>
@@ -114,7 +121,7 @@ const Navbar = () => {
     <div>
       <nav className={styles.navbar}>
         <Link href="/">
-        <div className={styles.logo}>
+        <div className={styles.logo} onClick={handleLogoClick}>
           <Image src="/kuramerlogo.png" alt="Logo" width={50} height={50} loading="eager" />
         </div>
         </Link>

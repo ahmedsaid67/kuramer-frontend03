@@ -17,6 +17,9 @@ function Index() {
   const router = useRouter();
   const [orientation, setOrientation] = useState('vertical'); // Default olarak 'vertical'
 
+  const [isScrolTab, setIsScrolTab] = useState(false);
+  const [variant, setVariant] = useState('fullWidth');
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,25 +45,10 @@ function Index() {
     } else {
       setActiveTab('kutuphane');
     }
-
-    // Ekran genişliğine bağlı olarak orientation'ı ayarla
-    const handleResize = () => {
-      if (window.innerWidth <= 1100) {
-        setOrientation('horizontal');
-      } else {
-        setOrientation('vertical');
-      }
-    };
-
-    // Sayfa yüklendiğinde ve pencere boyutu değiştiğinde kontrol et
-    handleResize();
-    window.addEventListener('resize', handleResize);
-
-    // Temizlik fonksiyonu, event listener'ı kaldırır
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
   }, [router.query.tab]);
+
+
+  
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -80,6 +68,64 @@ function Index() {
   };
 
 
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 1100) {
+        setOrientation('horizontal');
+      } else {
+        setOrientation('vertical');
+      }
+
+      const checkIsScrollTab = () => typeof window !== "undefined" && window.innerWidth <= 1100;
+  
+      setIsScrolTab(checkIsScrollTab());
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+
+  useEffect(() => {
+    const calculateTabWidths = () => {
+      const containerWidth = window.innerWidth; 
+      const maxTabWidth = 200; 
+      const minTabWidth = 100;
+      const tabPadding = 30; 
+    
+      let tabWidth = Math.max(containerWidth / 5 - tabPadding, minTabWidth);
+      
+
+      if (tabWidth > maxTabWidth) {
+        tabWidth = maxTabWidth;
+      }
+      
+
+      const totalTabsWidth = 5 * (tabWidth + tabPadding);
+  
+
+
+      if (totalTabsWidth > containerWidth) {
+        setVariant('scrollable');
+      } else {
+        setVariant('fullWidth');
+      }
+    };
+  
+    calculateTabWidths();
+    window.addEventListener('resize', calculateTabWidths);
+  
+    return () => {
+      window.removeEventListener('resize', calculateTabWidths);
+    };
+  }, []); 
+
+
   return (
     <>
       <Head>
@@ -95,14 +141,15 @@ function Index() {
       <div className={styles.mainContainer}>
         <div className={styles.leftContainer}>
         <Tabs
-          orientation={orientation}
-          variant="fullWidth"
-          value={activeTab}
-          onChange={handleTabChange}
-          className={styles.verticalTabs}
-          aria-label="Vertical tabs example"
-          centered
-
+           orientation={orientation}
+           variant={isScrolTab ? variant : "standard"}
+           scrollButtons={isScrolTab ? "auto" : false}
+           value={activeTab}
+           onChange={handleTabChange}
+           className={styles.verticalTabs}
+           aria-label="Vertical tabs example"
+           centered={!isScrolTab}
+           style={{ borderBottom: '1px solid #ccc' }}
         >
 
           <Tab className={styles.tab}
@@ -112,6 +159,7 @@ function Index() {
               </Typography>
             }
             value="kutuphane"
+            style={{ fontWeight: 'bold'}}
           />
           <Tab className={styles.tab}
             label={
@@ -120,6 +168,7 @@ function Index() {
               </Typography>
             }
             value="kuramer-kutuphane"
+            style={{ fontWeight: 'bold'}}
           />
           <Tab className={styles.tab}
             label={
@@ -128,6 +177,7 @@ function Index() {
               </Typography>
             }
             value="kuramer-veritabani"
+            style={{ fontWeight: 'bold'}}
           />
           <Tab className={styles.tab}
             label={
@@ -136,6 +186,7 @@ function Index() {
               </Typography>
             }
             value="literatur-arsiv-calismalari"
+            style={{ fontWeight: 'bold'}}
           />
         </Tabs>
 

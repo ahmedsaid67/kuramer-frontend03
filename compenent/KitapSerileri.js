@@ -13,7 +13,7 @@ import Slider from 'react-slick';
 import { API_ROUTES } from '../utils/constants';
 import Image from 'next/image';
 import Link from 'next/link';
-
+import { FaArrowRight, FaArrowLeft } from 'react-icons/fa'; 
 
 const convertToUrlFriendly = (text) => {
   if (text && typeof text === 'string') {
@@ -29,7 +29,7 @@ const CustomPrevArrow = (props) => {
   const { onClick } = props;
   return (
     <div className={styles.customPrevArrow} onClick={onClick}>
-      <FontAwesomeIcon icon={faChevronLeft} />
+      <FaArrowLeft />
     </div>
   );
 };
@@ -38,7 +38,7 @@ const CustomNextArrow = (props) => {
   const { onClick } = props;
   return (
     <div className={styles.customNextArrow} onClick={onClick}>
-       <FontAwesomeIcon icon={faChevronRight} />
+       <FaArrowRight />
     </div>
   );
 };
