@@ -147,12 +147,138 @@ function Index() {
                   aria-label="Vertical tabs example"
                   centered={!isScrolTab}
               >
-                <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>Kurumsal</Typography>} value="kurumsal" />
-                <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>Hakkımızda</Typography>} value="hakkimizda" />
-                <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>{("İlkelerimiz").toLocaleUpperCase('tr-TR')}</Typography>} value="ilkelerimiz" />
-                <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>{("Kurumsal Kimlik").toLocaleUpperCase('tr-TR')}</Typography>} value="kurumsal-kimlik" />
-                <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>Personeller</Typography>} value="personeller" />
-                <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>Kamuoyu Duyuruları</Typography>} value="kamuoyu-duyurulari" />
+                <Tab  sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', // Seçili Tab için de metin rengi siyah olarak ayarlanır
+              },
+             
+            }} label={<Typography sx={{
+                fontWeight: 'bold',
+                // Ekran genişliğine göre fontSize ayarları
+                // Direkt ekran genişliği değerlerine göre ayarlar
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', // 767px ve altı için
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', // 768px ile 1100px arası için
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', // 1101px ve üzeri için
+                },
+              }}>Kurumsal</Typography>} value="kurumsal" />
+                <Tab  sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', // Seçili Tab için de metin rengi siyah olarak ayarlanır
+              },
+             
+            }} label={<Typography sx={{
+                fontWeight: 'bold',
+                // Ekran genişliğine göre fontSize ayarları
+                // Direkt ekran genişliği değerlerine göre ayarlar
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', // 767px ve altı için
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', // 768px ile 1100px arası için
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', // 1101px ve üzeri için
+                },
+              }}>Hakkımızda</Typography>} value="hakkimizda" />
+                <Tab  sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', // Seçili Tab için de metin rengi siyah olarak ayarlanır
+              },
+             
+            }} label={<Typography sx={{
+                fontWeight: 'bold',
+                // Ekran genişliğine göre fontSize ayarları
+                // Direkt ekran genişliği değerlerine göre ayarlar
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', // 767px ve altı için
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', // 768px ile 1100px arası için
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', // 1101px ve üzeri için
+                },
+              }}>{("İlkelerimiz").toLocaleUpperCase('tr-TR')}</Typography>} value="ilkelerimiz" />
+                <Tab  sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', // Seçili Tab için de metin rengi siyah olarak ayarlanır
+              },
+             
+            }} label={<Typography sx={{
+                fontWeight: 'bold',
+                // Ekran genişliğine göre fontSize ayarları
+                // Direkt ekran genişliği değerlerine göre ayarlar
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', // 767px ve altı için
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', // 768px ile 1100px arası için
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', // 1101px ve üzeri için
+                },
+              }}>{("Kurumsal Kimlik").toLocaleUpperCase('tr-TR')}</Typography>} value="kurumsal-kimlik" />
+                <Tab  sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', // Seçili Tab için de metin rengi siyah olarak ayarlanır
+              },
+             
+            }} label={<Typography sx={{
+                fontWeight: 'bold',
+                // Ekran genişliğine göre fontSize ayarları
+                // Direkt ekran genişliği değerlerine göre ayarlar
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', // 767px ve altı için
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', // 768px ile 1100px arası için
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', // 1101px ve üzeri için
+                },
+              }}>Personeller</Typography>} value="personeller" />
+                <Tab  sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', // Seçili Tab için de metin rengi siyah olarak ayarlanır
+              },
+             
+            }} label={<Typography sx={{
+                fontWeight: 'bold',
+                // Ekran genişliğine göre fontSize ayarları
+                // Direkt ekran genişliği değerlerine göre ayarlar
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', // 767px ve altı için
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', // 768px ile 1100px arası için
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', // 1101px ve üzeri için
+                },
+              }}>Kamuoyu Duyuruları</Typography>} value="kamuoyu-duyurulari" />
             </Tabs>
         </div>
 

@@ -134,9 +134,63 @@ function Index() {
             className={styles.verticalTabs}
             centered
           >
-            <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>Temel Konu ve Kavramlar</Typography>} value="temel-konu-kavramlar" />
-            <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>Temel Konular</Typography>} value="temel-konular" />
-            <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>Temel Kavramlar</Typography>} value="temel-kavramlar" />
+            <Tab sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }} label={<Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>Temel Konu ve Kavramlar</Typography>} value="temel-konu-kavramlar" />
+            <Tab sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }} label={<Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>Temel Konular</Typography>} value="temel-konular" />
+            <Tab sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }} label={<Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>Temel Kavramlar</Typography>} value="temel-kavramlar" />
           </Tabs>
         </div>
         <div className={styles.rightContainer}>

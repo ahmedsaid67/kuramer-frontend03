@@ -212,54 +212,162 @@ function Index() {
            centered={!isScrolTab}
         >
           <Tab
-            className={styles.tab}
+            sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }}
             label={
-              <Typography className={styles.tabLabel}>
+              <Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>
                 {("Faaliyetler").toLocaleUpperCase('tr-TR')}
               </Typography>
             }
             value="faaliyetler"
           />
           <Tab
-            className={styles.tab}
+            sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }}
             label={
-              <Typography className={styles.tabLabel}>
+              <Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>
                 Sempozyumlar
               </Typography>
             }
             value="sempozyumlar"
           />
           <Tab
-            className={styles.tab}
+            sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }}
             label={
-              <Typography className={styles.tabLabel}>
+              <Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>
                 Çalıştaylar
               </Typography>
             }
             value="calistay"
           />
           <Tab
-            className={styles.tab}
+            sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }}
             label={
-              <Typography className={styles.tabLabel}>
+              <Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>
                 Konferanslar
               </Typography>
             }
             value="konferanslar"
           />
           <Tab
-            className={styles.tab}
+            sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }}
             label={
-              <Typography className={styles.tabLabel}>
+              <Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>
                 Araştırmalar
               </Typography>
             }
             value="arastirmalar"
           />
           <Tab
-            className={styles.tab}
+            sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }}
             label={
-              <Typography className={styles.tabLabel}>
+              <Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>
                 {("Eğitimler").toLocaleUpperCase('tr-TR')}
               </Typography>
             }

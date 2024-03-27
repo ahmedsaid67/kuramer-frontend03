@@ -242,7 +242,25 @@ function Mushaflar() {
             centered={!isScrolTab}
           >
             {kategoriler.map(kategori => (
-              <Tab className={styles.tab} key={kategori.id} label={<Typography component="span" className={styles.tabLabel}>{kategori.baslik}</Typography>} value={convertToUrlFriendly(kategori.baslik)} />
+              <Tab sx={{
+                borderBottom: 1,
+                borderColor: 'divider',
+                color: 'black',
+                '&.Mui-selected': {
+                  color: 'black', 
+                },
+              }} key={kategori.id} label={<Typography component="span" sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>{kategori.baslik.toLocaleUpperCase('tr-TR')}</Typography>} value={convertToUrlFriendly(kategori.baslik)} />
             ))}
           </Tabs>
         </div>

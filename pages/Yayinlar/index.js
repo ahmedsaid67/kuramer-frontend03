@@ -149,33 +149,105 @@ useEffect(() => {
           aria-label="Vertical tabs example"
           centered
         >
-          <Tab className={styles.tab}
+          <Tab sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }}
             label={
-              <Typography className={styles.tabLabel}>
+              <Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>
                 Yayınlar
               </Typography>
             }
             value="yayinlar"
           />
-          <Tab className={styles.tab}
+          <Tab sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }}
             label={
-              <Typography className={styles.tabLabel}>
-                KURAMER Bültenler
+              <Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>
+                Bültenler
               </Typography>
             }
             value="kuramerBultenler"
           />
-          <Tab className={styles.tab}
+          <Tab sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }}
             label={
-              <Typography className={styles.tabLabel}>
-                KURAMER Broşürler
+              <Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>
+                Broşürler
               </Typography>
             }
             value="kuramerBrosurler"
           />
-          <Tab className={styles.tab}
+          <Tab sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }}
             label={
-              <Typography className={styles.tabLabel}>
+              <Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>
                 {("Kitaplar").toLocaleUpperCase('tr-TR')}
               </Typography>
             }

@@ -126,25 +126,79 @@ function Index() {
           aria-label="Vertical tabs example"
           centered
         >
-          <Tab className={styles.tab}
+          <Tab sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }}
             label={
-              <Typography className={styles.tabLabel}>
+              <Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>
                 Kuran-ı Kerim
               </Typography>
             }
             value="kuran-i-kerim"
           />
-          <Tab className={styles.tab}
+          <Tab sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }}
             label={
-              <Typography className={styles.tabLabel}>
+              <Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>
                 Mushaflar
               </Typography>
             }
             value="mushaflar"
           />
-          <Tab className={styles.tab}
+          <Tab sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }}
             label={
-              <Typography className={styles.tabLabel}>
+              <Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>
                 Mushaf Farkları
               </Typography>
             }

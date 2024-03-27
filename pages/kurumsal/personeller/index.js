@@ -236,7 +236,28 @@ function Personeller() {
             centered={!isScrolTab}
           >
             {kategoriler.map(kategori => (
-              <Tab  className={styles.tab} key={kategori.id} label={<Typography  component="span" className={styles.tabLabel}>{kategori.name}</Typography>} value={convertToUrlFriendly(kategori.name)} />
+              <Tab  sx={{
+                borderBottom: 1,
+                borderColor: 'divider',
+                color: 'black',
+                '&.Mui-selected': {
+                  color: 'black', // Seçili Tab için de metin rengi siyah olarak ayarlanır
+                },
+               
+              }} key={kategori.id} label={<Typography  component="span" sx={{
+                fontWeight: 'bold',
+                // Ekran genişliğine göre fontSize ayarları
+                // Direkt ekran genişliği değerlerine göre ayarlar
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', // 767px ve altı için
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', // 768px ile 1100px arası için
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', // 1101px ve üzeri için
+                },
+              }}>{kategori.name.toLocaleUpperCase('tr-TR')}</Typography>} value={convertToUrlFriendly(kategori.name)} />
             ))}
           </Tabs>
         </div>

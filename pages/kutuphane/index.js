@@ -149,44 +149,122 @@ function Index() {
            className={styles.verticalTabs}
            aria-label="Vertical tabs example"
            centered={!isScrolTab}
-           style={{ borderBottom: '1px solid #ccc' }}
         >
 
-          <Tab className={styles.tab}
+          <Tab 
             label={
-              <Typography className={styles.tabLabel}>
+              <Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>
                 KÜTÜPHANE
               </Typography>
             }
             value="kutuphane"
-            style={{ fontWeight: 'bold'}}
+            sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }}
           />
-          <Tab className={styles.tab}
+          <Tab sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', // Seçili Tab için de metin rengi siyah olarak ayarlanır
+              },
+            }}
             label={
-              <Typography className={styles.tabLabel}>
+              <Typography sx={{
+                fontWeight: 'bold',
+                // Ekran genişliğine göre fontSize ayarları
+                // Direkt ekran genişliği değerlerine göre ayarlar
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', // 767px ve altı için
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', // 768px ile 1100px arası için
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', // 1101px ve üzeri için
+                },
+              }}>
                 KURAMER KÜTÜPHANE PROGRAMI
               </Typography>
             }
             value="kuramer-kutuphane"
-            style={{ fontWeight: 'bold'}}
+
           />
-          <Tab className={styles.tab}
+          <Tab sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', // Seçili Tab için de metin rengi siyah olarak ayarlanır
+              },
+            }}
             label={
-              <Typography className={styles.tabLabel}>
+              <Typography sx={{
+                fontWeight: 'bold',
+                // Ekran genişliğine göre fontSize ayarları
+                // Direkt ekran genişliği değerlerine göre ayarlar
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', // 767px ve altı için
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', // 768px ile 1100px arası için
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', // 1101px ve üzeri için
+                },
+              }}>
                 KURAMER VERİTABANI
               </Typography>
             }
             value="kuramer-veritabani"
-            style={{ fontWeight: 'bold'}}
+
           />
-          <Tab className={styles.tab}
+          <Tab sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', // Seçili Tab için de metin rengi siyah olarak ayarlanır
+              },
+            }}
             label={
-              <Typography className={styles.tabLabel}>
+              <Typography sx={{
+                fontWeight: 'bold',
+                // Ekran genişliğine göre fontSize ayarları
+                // Direkt ekran genişliği değerlerine göre ayarlar
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', // 767px ve altı için
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', // 768px ile 1100px arası için
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', // 1101px ve üzeri için
+                },
+              }}>
                 LİTERATÜR VE ARŞİVLEME ÇALIŞMALARI
               </Typography>
             }
             value="literatur-arsiv-calismalari"
-            style={{ fontWeight: 'bold'}}
+
+
           />
         </Tabs>
 

@@ -69,9 +69,63 @@ function Index() {
             aria-label="Vertical tabs example"
             centered
           >
-            <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>İLKELERİMİZ</Typography>} value="ilkelerimiz" />
-            <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>TEMEL İLKELER</Typography>} value="temelIlkeler" />
-            <Tab className={styles.tab} label={<Typography className={styles.tabLabel}>TELİF İLKELERİ</Typography>} value="telifIlkeleri" />
+            <Tab sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }}label={<Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>İLKELERİMİZ</Typography>} value="ilkelerimiz" />
+            <Tab sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }}label={<Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>TEMEL İLKELER</Typography>} value="temelIlkeler" />
+            <Tab sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              color: 'black',
+              '&.Mui-selected': {
+                color: 'black', 
+              },
+            }}label={<Typography sx={{
+                fontWeight: 'bold',
+                '@media (max-width: 767px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 768px) and (max-width: 1100px)': {
+                  fontSize: '13px', 
+                },
+                '@media (min-width: 1101px)': {
+                  fontSize: '14px', 
+                },
+              }}>TELİF İLKELERİ</Typography>} value="telifIlkeleri" />
           </Tabs>
         </div>
 
