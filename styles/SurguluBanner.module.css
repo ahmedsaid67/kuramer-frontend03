@@ -1,9 +1,9 @@
-/* SurguluBanner.module.css */
 .sliderContainer {
   margin-bottom: -5px;
-  background-color: #d4cfca; /* Arka plan rengi */
-
+  background-color: #d4cfca;
   margin-top: 5px;
+  width: 100%;
+  height: 700px;
 }
 
 
@@ -28,14 +28,18 @@
   right: 32px;
 }
 
+/* SurguluBanner.module.css içerisinde */
 .placeholder {
   width: 100%;
-  height: 100vh; /* Banner'ınızın yüksekliğine göre ayarlayın */
+  height: 800px; /* Varsayılan yükseklik, ihtiyaca göre ayarlayın */
   background: #d4cfca;
   display: flex;
   justify-content: center;
   align-items: center;
+  color: #ccc;
+  font-size: 20px;
 }
+
 
 /* Responsive adjustments */
 @media only screen and (max-width: 768px) {
@@ -49,6 +53,12 @@
   .rightArrow {
     right: 8px;
     left: auto;
+  }
+  .sliderContainer{
+    height: 180px;
+  }
+  .placeholder{
+    height: 180px;
   }
 }
 
@@ -71,5 +81,4 @@
   height: auto;
   background-repeat: no-repeat;
 }
-
 
